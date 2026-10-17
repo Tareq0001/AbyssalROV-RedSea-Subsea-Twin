@@ -3,33 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>AbyssalROV 3D — Red Sea Oceanographic Digital Twin & Subsea Robotics</title>
-  <meta name="description" content="High-fidelity 3D subsea ROV digital twin for Red Sea deep exploration. Features 6-DoF hydrodynamic thrust vectoring, multibeam bathymetric sonar, 5-axis hydraulic manipulator, and oceanographic telemetry.">
+  <title>AbyssalROV 3D — Red Sea Oceanographic Subsea Robotics Digital Twin</title>
+  <meta name="description" content="Cinematic 3D Subsea ROV Digital Twin in the Red Sea Trench. 6-DoF Thruster Vectoring, Bioluminescent Marine Life, Multibeam Sonar, and Tactile Pilot Console.">
   
-  <!-- Google Fonts: Inter & Tajawal -->
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Tajawal:wght@300;400;500;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Tajawal:wght@300;400;500;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
   
   <!-- FontAwesome 6 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
-  <!-- Three.js & Controls -->
+  <!-- Three.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
   <style>
     :root {
-      --bg-ocean: #010811;
-      --bg-panel: rgba(4, 18, 34, 0.78);
-      --bg-panel-hover: rgba(6, 26, 48, 0.88);
-      --border-cyan: rgba(0, 229, 255, 0.28);
-      --border-cyan-glow: rgba(0, 229, 255, 0.65);
-      --accent-cyan: #00e5ff;
-      --accent-emerald: #00ffaa;
-      --accent-amber: #ffb300;
-      --accent-crimson: #ff3366;
-      --text-main: #e0f2fe;
-      --text-muted: #7dd3fc;
+      --bg-ocean: #010813;
+      --cyan-glow: #00f0ff;
+      --cyan-dim: rgba(0, 240, 255, 0.2);
+      --emerald-glow: #00ffaa;
+      --amber-alert: #ffb700;
+      --crimson-alert: #ff2a5f;
+      --panel-bg: rgba(3, 14, 28, 0.82);
+      --panel-border: rgba(0, 240, 255, 0.25);
       --font-ui: 'Tajawal', 'Inter', sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
     }
@@ -50,461 +47,311 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background-color: var(--bg-ocean);
+      background: var(--bg-ocean);
       font-family: var(--font-ui);
-      color: var(--text-main);
+      color: #e2f1ff;
     }
 
     #webgl-canvas {
       position: absolute;
-      top: 0;
-      left: 0;
+      inset: 0;
       width: 100%;
       height: 100%;
       z-index: 1;
     }
 
-    /* Top Command Header */
-    .rov-header {
+    /* Top Command Bridge */
+    .top-bridge {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
-      z-index: 20;
+      z-index: 30;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 24px;
-      background: linear-gradient(180deg, rgba(1, 8, 17, 0.95) 0%, rgba(1, 8, 17, 0.4) 75%, transparent 100%);
-      pointer-events: auto;
-      border-bottom: 1px solid rgba(0, 229, 255, 0.15);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      padding: 14px 28px;
+      background: linear-gradient(180deg, rgba(1, 8, 19, 0.95) 0%, rgba(1, 8, 19, 0.5) 70%, transparent 100%);
+      border-bottom: 1px solid rgba(0, 240, 255, 0.18);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
     }
 
-    .brand-group {
+    .brand-section {
       display: flex;
       align-items: center;
       gap: 14px;
     }
 
-    .brand-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, rgba(0, 229, 255, 0.2), rgba(0, 255, 170, 0.1));
-      border: 1px solid var(--border-cyan);
+    .brand-logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(0, 240, 255, 0.25), rgba(0, 255, 170, 0.15));
+      border: 1px solid var(--cyan-glow);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--accent-cyan);
-      font-size: 20px;
-      box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
+      color: var(--cyan-glow);
+      font-size: 22px;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.35);
     }
 
-    .brand-text h1 {
-      font-size: 17px;
-      font-weight: 800;
-      letter-spacing: 0.5px;
+    .brand-title h1 {
+      font-size: 19px;
+      font-weight: 900;
       color: #ffffff;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .brand-text h1 span.tag {
-      font-size: 10px;
-      padding: 2px 7px;
-      border-radius: 4px;
-      background: rgba(0, 229, 255, 0.18);
-      border: 1px solid var(--border-cyan);
-      color: var(--accent-cyan);
-      font-family: var(--font-mono);
-      font-weight: 600;
-    }
-
-    .brand-text p {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
-
-    /* Telemetry Header Quick Badges */
-    .header-telemetry {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .telemetry-chip {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      background: rgba(3, 20, 38, 0.65);
-      border: 1px solid rgba(0, 229, 255, 0.18);
-      border-radius: 8px;
-      padding: 5px 12px;
-      font-family: var(--font-mono);
-    }
-
-    .telemetry-chip .label {
-      font-size: 9px;
-      color: var(--text-muted);
-      text-transform: uppercase;
       letter-spacing: 0.5px;
-    }
-
-    .telemetry-chip .val {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--accent-cyan);
-    }
-
-    .header-controls {
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
-    .btn-hud {
-      background: rgba(3, 22, 43, 0.7);
-      border: 1px solid var(--border-cyan);
-      color: var(--text-main);
-      padding: 8px 14px;
-      border-radius: 8px;
+    .brand-title span.badge-pill {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 5px;
+      background: rgba(0, 240, 255, 0.2);
+      border: 1px solid var(--cyan-glow);
+      color: var(--cyan-glow);
+      font-family: var(--font-mono);
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .brand-title p {
       font-size: 12px;
-      font-weight: 600;
+      color: #7dd3fc;
+      margin-top: 3px;
+    }
+
+    .header-quick-stats {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .stat-badge {
+      display: flex;
+      flex-direction: column;
+      background: rgba(2, 16, 33, 0.75);
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      padding: 6px 14px;
+      border-radius: 9px;
+      font-family: var(--font-mono);
+    }
+
+    .stat-badge .lbl {
+      font-size: 9px;
+      color: #7dd3fc;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .stat-badge .num {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--cyan-glow);
+      text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+    }
+
+    .header-btn-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-action {
+      background: rgba(4, 22, 44, 0.85);
+      border: 1px solid var(--panel-border);
+      color: #ffffff;
+      padding: 9px 16px;
+      border-radius: 9px;
+      font-size: 12px;
+      font-weight: 700;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 8px;
-      transition: all 0.2s ease;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       font-family: var(--font-ui);
     }
 
-    .btn-hud:hover {
-      background: rgba(0, 229, 255, 0.15);
-      border-color: var(--accent-cyan);
-      box-shadow: 0 0 12px rgba(0, 229, 255, 0.3);
-      color: #ffffff;
+    .btn-action:hover {
+      background: rgba(0, 240, 255, 0.2);
+      border-color: var(--cyan-glow);
+      box-shadow: 0 0 16px rgba(0, 240, 255, 0.4);
+      transform: translateY(-1px);
     }
 
-    .btn-hud.active {
-      background: var(--accent-cyan);
-      color: #010c18;
-      border-color: var(--accent-cyan);
-      box-shadow: 0 0 15px rgba(0, 229, 255, 0.5);
+    .btn-action.active {
+      background: var(--cyan-glow);
+      color: #010a14;
+      border-color: var(--cyan-glow);
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
     }
 
-    /* Flight HUD Overlay (Pitch, Roll, Heading, Crosshairs) */
-    .flight-hud {
+    .btn-autopilot {
+      background: linear-gradient(135deg, rgba(0, 255, 170, 0.25), rgba(0, 240, 255, 0.15));
+      border: 1px solid var(--emerald-glow);
+      color: var(--emerald-glow);
+    }
+
+    .btn-autopilot:hover {
+      background: var(--emerald-glow);
+      color: #010a14;
+      box-shadow: 0 0 20px rgba(0, 255, 170, 0.5);
+    }
+
+    /* Tactile Subsea Pilot Console (On-Screen Controller) */
+    .pilot-console-overlay {
       position: absolute;
-      top: 70px;
-      left: 0;
-      width: 100%;
-      height: calc(100% - 70px);
-      z-index: 10;
-      pointer-events: none;
+      bottom: 24px;
+      left: 28px;
+      z-index: 25;
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 18px;
+      padding: 16px 20px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(0, 240, 255, 0.15);
+      width: 290px;
     }
 
-    /* Heading Tape Top Center */
-    .heading-tape-container {
-      position: absolute;
-      top: 15px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 320px;
-      height: 48px;
-      background: rgba(2, 12, 24, 0.65);
-      border: 1px solid var(--border-cyan);
-      border-radius: 8px;
-      overflow: hidden;
+    .console-header {
       display: flex;
-      flex-direction: column;
+      justify-content: space-between;
       align-items: center;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      margin-bottom: 14px;
+      border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+      padding-bottom: 8px;
     }
 
-    .heading-tape-current {
-      font-family: var(--font-mono);
+    .console-header h3 {
       font-size: 13px;
-      font-weight: 700;
-      color: var(--accent-cyan);
-      padding-top: 3px;
-    }
-
-    .heading-tape-ticks {
-      position: relative;
-      width: 100%;
-      height: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-top: 1px solid rgba(0, 229, 255, 0.15);
-    }
-
-    .heading-needle {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 2px;
-      height: 100%;
-      background: var(--accent-amber);
-      z-index: 2;
-    }
-
-    /* Center Crosshair */
-    .hud-reticle {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 260px;
-      height: 180px;
-      border: 1px dashed rgba(0, 229, 255, 0.25);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      pointer-events: none;
-    }
-
-    .hud-reticle-center {
-      position: relative;
-      width: 40px;
-      height: 40px;
-    }
-
-    .hud-reticle-center::before,
-    .hud-reticle-center::after {
-      content: '';
-      position: absolute;
-      background: rgba(0, 229, 255, 0.7);
-    }
-
-    .hud-reticle-center::before {
-      top: 50%;
-      left: 0;
-      width: 100%;
-      height: 1.5px;
-      transform: translateY(-50%);
-    }
-
-    .hud-reticle-center::after {
-      top: 0;
-      left: 50%;
-      width: 1.5px;
-      height: 100%;
-      transform: translateX(-50%);
-    }
-
-    .hud-reticle-circle {
-      position: absolute;
-      width: 18px;
-      height: 18px;
-      border: 1.5px solid var(--accent-cyan);
-      border-radius: 50%;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    .hud-pitch-ladder {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 140px;
-      height: 100px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      opacity: 0.6;
-    }
-
-    .pitch-line {
-      display: flex;
-      justify-content: space-between;
-      font-size: 9px;
-      font-family: var(--font-mono);
-      color: var(--accent-cyan);
-    }
-
-    .pitch-line span.bar {
-      width: 35px;
-      height: 1.5px;
-      background: var(--accent-cyan);
-    }
-
-    /* Depth Tape (Right Side) */
-    .depth-tape-wrap {
-      position: absolute;
-      right: 24px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 90px;
-      height: 280px;
-      background: var(--bg-panel);
-      border: 1px solid var(--border-cyan);
-      border-radius: 12px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 12px 6px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.6);
-      backdrop-filter: blur(10px);
-    }
-
-    .depth-title {
-      font-size: 10px;
-      font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      margin-bottom: 4px;
-    }
-
-    .depth-value-box {
-      background: rgba(0, 229, 255, 0.15);
-      border: 1px solid var(--accent-cyan);
-      border-radius: 6px;
-      padding: 4px 8px;
-      font-family: var(--font-mono);
-      font-size: 16px;
       font-weight: 800;
-      color: #ffffff;
-      text-shadow: 0 0 10px var(--accent-cyan);
-      margin-bottom: 8px;
-    }
-
-    .depth-meter-bar {
-      position: relative;
-      width: 14px;
-      flex: 1;
-      background: rgba(0, 20, 40, 0.8);
-      border-radius: 6px;
-      border: 1px solid rgba(0, 229, 255, 0.2);
-      overflow: hidden;
-    }
-
-    .depth-meter-fill {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 35%;
-      background: linear-gradient(180deg, var(--accent-cyan) 0%, #0284c7 60%, #1e1b4b 100%);
-      transition: height 0.15s ease-out;
-      box-shadow: 0 0 8px var(--accent-cyan);
-    }
-
-    .depth-unit {
-      font-size: 10px;
-      color: var(--text-muted);
-      margin-top: 6px;
-      font-family: var(--font-mono);
-    }
-
-    /* Left Lateral HUD: Altitude (DVL) & Speed */
-    .dvl-tape-wrap {
-      position: absolute;
-      left: 24px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 90px;
-      height: 280px;
-      background: var(--bg-panel);
-      border: 1px solid var(--border-cyan);
-      border-radius: 12px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 12px 6px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.6);
-      backdrop-filter: blur(10px);
-    }
-
-    /* Bottom Cockpit Dock Tabs / Panels */
-    .rov-dock {
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: min(1280px, calc(100% - 40px));
-      z-index: 20;
-      display: grid;
-      grid-template-columns: 280px 1fr 300px;
-      gap: 16px;
-      pointer-events: auto;
-    }
-
-    .dock-panel {
-      background: var(--bg-panel);
-      border: 1px solid var(--border-cyan);
-      border-radius: 14px;
-      padding: 14px 16px;
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.65);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .dock-panel::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
-    }
-
-    .panel-hdr {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-      border-bottom: 1px solid rgba(0, 229, 255, 0.12);
-      padding-bottom: 6px;
-    }
-
-    .panel-hdr h3 {
-      font-size: 13px;
-      font-weight: 700;
       color: #ffffff;
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    .panel-hdr h3 i {
-      color: var(--accent-cyan);
+    .console-header h3 i {
+      color: var(--cyan-glow);
     }
 
-    .panel-hdr span.badge {
-      font-size: 10px;
+    .dpad-cluster {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      width: 170px;
+      margin: 0 auto 12px auto;
+    }
+
+    .btn-dpad {
+      height: 48px;
+      background: rgba(3, 25, 48, 0.85);
+      border: 1px solid rgba(0, 240, 255, 0.35);
+      border-radius: 10px;
+      color: #ffffff;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-dpad span.sub {
+      font-size: 8px;
       font-family: var(--font-mono);
-      padding: 2px 6px;
-      border-radius: 4px;
-      background: rgba(0, 229, 255, 0.12);
-      color: var(--accent-cyan);
-      border: 1px solid rgba(0, 229, 255, 0.25);
+      color: var(--cyan-glow);
     }
 
-    /* Sonar Panel (Left) */
-    .sonar-radar-box {
-      width: 100%;
-      height: 180px;
-      position: relative;
+    .btn-dpad:active, .btn-dpad.pressed {
+      background: var(--cyan-glow);
+      color: #010a14;
+      box-shadow: 0 0 15px var(--cyan-glow);
+      transform: scale(0.96);
+    }
+
+    .btn-dpad.center {
+      background: rgba(0, 240, 255, 0.12);
+      border: 1px dashed rgba(0, 240, 255, 0.4);
+      color: var(--cyan-glow);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .depth-control-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .btn-depth {
+      padding: 10px;
+      border-radius: 8px;
+      background: rgba(2, 22, 42, 0.75);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(0, 10, 20, 0.85);
-      border-radius: 10px;
-      border: 1px solid rgba(0, 229, 255, 0.2);
+      gap: 8px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-depth:hover {
+      background: rgba(0, 240, 255, 0.25);
+      border-color: var(--cyan-glow);
+    }
+
+    .btn-depth:active, .btn-depth.pressed {
+      background: var(--emerald-glow);
+      color: #010a14;
+      box-shadow: 0 0 14px var(--emerald-glow);
+    }
+
+    /* Right Side Cockpit Instrument Dock */
+    .cockpit-dock-right {
+      position: absolute;
+      bottom: 24px;
+      right: 28px;
+      z-index: 25;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      width: 320px;
+    }
+
+    .dock-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 18px;
+      padding: 14px 18px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(0, 240, 255, 0.1);
+    }
+
+    /* Sonar Mini Screen */
+    .sonar-screen-container {
+      width: 100%;
+      height: 160px;
+      background: #010e1c;
+      border-radius: 12px;
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      position: relative;
       overflow: hidden;
+      margin-top: 6px;
     }
 
     #sonar-canvas {
@@ -513,620 +360,411 @@
       display: block;
     }
 
-    .sonar-stats-row {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 8px;
-      font-size: 11px;
-      font-family: var(--font-mono);
-      color: var(--text-muted);
-    }
-
-    /* Manipulator Arm Panel (Center) */
-    .arm-controls-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .arm-slider-group {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .arm-slider-group label {
-      font-size: 10px;
-      color: var(--text-muted);
-      display: flex;
-      justify-content: space-between;
-      font-family: var(--font-mono);
-    }
-
-    .arm-slider-group input[type="range"] {
-      width: 100%;
-      height: 4px;
-      background: rgba(0, 229, 255, 0.2);
-      border-radius: 2px;
-      outline: none;
-      -webkit-appearance: none;
-    }
-
-    .arm-slider-group input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: var(--accent-cyan);
-      cursor: pointer;
-      box-shadow: 0 0 8px var(--accent-cyan);
-    }
-
-    .arm-actions-row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .btn-arm-action {
-      flex: 1;
-      padding: 8px 10px;
-      border-radius: 6px;
-      background: rgba(0, 229, 255, 0.1);
-      border: 1px solid rgba(0, 229, 255, 0.3);
-      color: var(--text-main);
-      font-size: 11px;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: all 0.2s ease;
-      font-family: var(--font-ui);
-    }
-
-    .btn-arm-action:hover {
-      background: rgba(0, 229, 255, 0.25);
-      border-color: var(--accent-cyan);
-      box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
-      color: #ffffff;
-    }
-
-    .btn-arm-action.active {
-      background: var(--accent-emerald);
-      color: #01121d;
-      border-color: var(--accent-emerald);
-      box-shadow: 0 0 12px rgba(0, 255, 170, 0.5);
-    }
-
-    /* Environmental Telemetry Panel (Right) */
-    .telemetry-metrics-grid {
+    /* Telemetry Grid */
+    .metrics-2x2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
-    }
-
-    .metric-card {
-      background: rgba(1, 14, 28, 0.7);
-      border: 1px solid rgba(0, 229, 255, 0.15);
-      border-radius: 8px;
-      padding: 6px 10px;
-    }
-
-    .metric-card .m-label {
-      font-size: 9px;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .metric-card .m-val {
-      font-size: 15px;
-      font-weight: 700;
-      color: #ffffff;
-      font-family: var(--font-mono);
-      margin-top: 2px;
-    }
-
-    .metric-card .m-unit {
-      font-size: 10px;
-      color: var(--accent-cyan);
-      font-weight: normal;
-    }
-
-    /* Mission Objectives Banner */
-    .mission-bar {
       margin-top: 8px;
-      background: rgba(0, 229, 255, 0.08);
-      border: 1px dashed rgba(0, 229, 255, 0.3);
-      border-radius: 6px;
-      padding: 6px 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 11px;
     }
 
-    .mission-bar .task-text {
-      color: var(--accent-emerald);
-      font-weight: 600;
+    .m-box {
+      background: rgba(1, 15, 30, 0.8);
+      border: 1px solid rgba(0, 240, 255, 0.18);
+      border-radius: 9px;
+      padding: 8px 10px;
+    }
+
+    .m-box .m-lbl {
+      font-size: 10px;
+      color: #7dd3fc;
       display: flex;
       align-items: center;
       gap: 6px;
     }
 
-    /* Mobile Controls Touch Joypads */
-    .mobile-joypads {
-      display: none;
-      position: absolute;
-      bottom: 240px;
-      left: 0;
-      width: 100%;
-      padding: 0 24px;
-      pointer-events: none;
-      z-index: 25;
-      justify-content: space-between;
+    .m-box .m-val {
+      font-size: 16px;
+      font-weight: 800;
+      color: #ffffff;
+      font-family: var(--font-mono);
+      margin-top: 3px;
     }
 
-    .joypad-zone {
-      width: 110px;
-      height: 110px;
+    .m-box .m-val span.u {
+      font-size: 10px;
+      color: var(--cyan-glow);
+      font-weight: 600;
+    }
+
+    /* Primary Flight HUD Reticle */
+    .center-hud-ring {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 220px;
+      height: 220px;
+      border: 1.5px dashed rgba(0, 240, 255, 0.3);
       border-radius: 50%;
-      background: rgba(0, 229, 255, 0.12);
-      border: 2px dashed rgba(0, 229, 255, 0.4);
-      position: relative;
-      pointer-events: auto;
+      pointer-events: none;
+      z-index: 10;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    .joypad-knob {
-      width: 44px;
-      height: 44px;
+    .hud-pip {
+      width: 14px;
+      height: 14px;
+      border: 2px solid var(--cyan-glow);
       border-radius: 50%;
-      background: var(--accent-cyan);
-      box-shadow: 0 0 15px var(--accent-cyan);
+      box-shadow: 0 0 10px var(--cyan-glow);
     }
 
-    /* Keyboard Help Modal */
-    .modal-backdrop {
+    .hud-depth-gauge {
+      position: absolute;
+      top: 50%;
+      right: 360px;
+      transform: translateY(-50%);
+      background: rgba(2, 16, 33, 0.8);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      padding: 12px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      z-index: 15;
+      pointer-events: none;
+    }
+
+    .hud-depth-gauge .val {
+      font-size: 18px;
+      font-weight: 800;
+      color: #ffffff;
+      text-shadow: 0 0 12px var(--cyan-glow);
+    }
+
+    .hud-depth-gauge .sub {
+      font-size: 9px;
+      color: #7dd3fc;
+      letter-spacing: 0.5px;
+    }
+
+    /* Mission Objectives Notification Toast */
+    .mission-toast {
+      position: absolute;
+      top: 90px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(2, 18, 38, 0.88);
+      border: 1px solid var(--cyan-glow);
+      border-radius: 30px;
+      padding: 8px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      z-index: 28;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6), 0 0 20px rgba(0, 240, 255, 0.25);
+      backdrop-filter: blur(12px);
+    }
+
+    .mission-toast i {
+      color: var(--emerald-glow);
+      font-size: 16px;
+    }
+
+    /* Modal Help */
+    .modal-veil {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 5, 12, 0.85);
+      background: rgba(0, 6, 14, 0.85);
       z-index: 100;
       align-items: center;
       justify-content: center;
-      backdrop-filter: blur(8px);
+      backdrop-filter: blur(10px);
     }
 
-    .modal-content {
-      background: #041424;
-      border: 1px solid var(--accent-cyan);
-      box-shadow: 0 0 35px rgba(0, 229, 255, 0.35);
-      border-radius: 16px;
+    .modal-box {
+      background: #031326;
+      border: 1px solid var(--cyan-glow);
+      border-radius: 20px;
       width: min(640px, 92vw);
-      max-height: 85vh;
-      overflow-y: auto;
-      padding: 24px 28px;
-    }
-
-    .modal-hdr {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-      border-bottom: 1px solid rgba(0, 229, 255, 0.2);
-      padding-bottom: 10px;
-    }
-
-    .modal-hdr h2 {
-      font-size: 18px;
+      padding: 26px 30px;
+      box-shadow: 0 0 50px rgba(0, 240, 255, 0.4);
       color: #ffffff;
-      display: flex;
-      align-items: center;
-      gap: 10px;
     }
 
-    .btn-close-modal {
-      background: none;
-      border: none;
-      color: #ffffff;
-      font-size: 22px;
-      cursor: pointer;
-    }
-
-    .keys-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-      font-size: 13px;
-    }
-
-    .keys-table tr {
-      border-bottom: 1px solid rgba(0, 229, 255, 0.1);
-    }
-
-    .keys-table td {
-      padding: 8px 6px;
-    }
-
-    .kbd-chip {
-      background: rgba(0, 229, 255, 0.15);
-      border: 1px solid rgba(0, 229, 255, 0.4);
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--accent-cyan);
-    }
-
-    /* Responsive Queries */
-    @media (max-width: 1024px) {
-      .rov-dock {
-        grid-template-columns: 1fr;
-        max-height: 280px;
-        overflow-y: auto;
-        bottom: 10px;
-      }
-      .mobile-joypads {
-        display: flex;
-      }
-      .header-telemetry {
-        display: none;
-      }
-    }
-
-    @media (max-width: 640px) {
-      .brand-text p {
-        display: none;
-      }
-      .rov-header {
-        padding: 8px 14px;
-      }
-      .btn-hud span.txt {
-        display: none;
-      }
+    /* Responsive */
+    @media (max-width: 900px) {
+      .top-bridge { padding: 10px 16px; }
+      .header-quick-stats { display: none; }
+      .hud-depth-gauge { display: none; }
+      .cockpit-dock-right { width: 240px; right: 12px; bottom: 12px; }
+      .pilot-console-overlay { left: 12px; bottom: 12px; width: 220px; padding: 12px; }
+      .dpad-cluster { width: 140px; }
+      .btn-dpad { height: 40px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Three.js Canvas Container -->
+  <!-- Three.js Canvas -->
   <canvas id="webgl-canvas"></canvas>
 
-  <!-- Top Cockpit Header Bar -->
-  <header class="rov-header">
-    <div class="brand-group">
-      <div class="brand-icon">
+  <!-- Top Command Bridge -->
+  <header class="top-bridge">
+    <div class="brand-section">
+      <div class="brand-logo">
         <i class="fa-solid fa-water"></i>
       </div>
-      <div class="brand-text">
-        <h1 id="txt-title">
+      <div class="brand-title">
+        <h1>
           AbyssalROV 3D
-          <span class="tag">RED SEA EXPLORER</span>
+          <span class="badge-pill">RED SEA EXPEDITION</span>
         </h1>
-        <p id="txt-subtitle">التوأم الرقمي لمحاكاة غواصات الأعماق الاستكشافية في أخدود البحر الأحمر</p>
+        <p id="txt-sub">التوأم الرقمي لمحاكاة غواصات الأعماق الاستكشافية في أخدود البحر الأحمر (-2,800م)</p>
       </div>
     </div>
 
-    <!-- Live Telemetry Badges -->
-    <div class="header-telemetry">
-      <div class="telemetry-chip">
-        <span class="label" id="lbl-mission-phase">مرحلة المهمة</span>
-        <span class="val" id="val-mission-phase">DIVING · الغوص</span>
+    <!-- Live Telemetry Quick Badges -->
+    <div class="header-quick-stats">
+      <div class="stat-badge">
+        <span class="lbl" id="lbl-depth">العمق الحالي</span>
+        <span class="num" id="top-depth">-452.4 M</span>
       </div>
-      <div class="telemetry-chip">
-        <span class="label" id="lbl-pressure">الضغط الهيدروستاتيكي</span>
-        <span class="val" id="val-pressure-head">46.2 BAR</span>
+      <div class="stat-badge">
+        <span class="lbl" id="lbl-pressure">الضغط الهيدروستاتيكي</span>
+        <span class="num" id="top-pressure">46.2 BAR</span>
       </div>
-      <div class="telemetry-chip">
-        <span class="label" id="lbl-usbl-link">ربط التتبع الصوتي USBL</span>
-        <span class="val" style="color:var(--accent-emerald);" id="val-usbl-stat">LOCK 99.8%</span>
+      <div class="stat-badge">
+        <span class="lbl" id="lbl-temp">حرارة المياه</span>
+        <span class="num" id="top-temp">21.8 °C</span>
       </div>
-      <div class="telemetry-chip">
-        <span class="label" id="lbl-fps">معدل الإطارات FPS</span>
-        <span class="val" id="val-fps">60 FPS</span>
+      <div class="stat-badge">
+        <span class="lbl">USBL LINK</span>
+        <span class="num" style="color:var(--emerald-glow);">LOCKED 99.8%</span>
       </div>
     </div>
 
-    <!-- Header Action Buttons -->
-    <div class="header-controls">
-      <button type="button" class="btn-hud" id="btn-audio-toggle" onclick="toggleAudio()" title="الصوت التفاعلي">
-        <i class="fa-solid fa-volume-high"></i>
-        <span class="txt" id="txt-audio">الصوت: مفعل</span>
+    <!-- Header Actions -->
+    <div class="header-btn-row">
+      <button type="button" class="btn-action btn-autopilot" id="btn-autopilot" onclick="toggleAutoPilot()">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        <span id="txt-autopilot">جولة استكشاف ذاتية (Auto-Pilot)</span>
       </button>
-      <button type="button" class="btn-hud" id="btn-camera-toggle" onclick="cycleCamera()" title="زاوية الكاميرا">
+      <button type="button" class="btn-action" id="btn-cam" onclick="cycleCamera()">
         <i class="fa-solid fa-video"></i>
-        <span class="txt" id="txt-cam">الكاميرا: قمرة القيادة</span>
+        <span id="txt-cam">الكاميرا: قمرة القيادة</span>
       </button>
-      <button type="button" class="btn-hud" id="btn-help" onclick="openHelpModal()" title="دليل أزرار التحكم">
-        <i class="fa-solid fa-keyboard"></i>
-        <span class="txt" id="txt-controls">التحكم</span>
+      <button type="button" class="btn-action" id="btn-audio" onclick="toggleAudio()">
+        <i class="fa-solid fa-volume-high"></i>
+        <span id="txt-audio">الصوت</span>
       </button>
-      <button type="button" class="btn-hud" id="btn-lang" onclick="toggleLanguage()" title="تبديل اللغة">
+      <button type="button" class="btn-action" id="btn-lang" onclick="toggleLanguage()">
         <i class="fa-solid fa-globe"></i>
-        <span class="txt">English</span>
+        <span>English</span>
       </button>
     </div>
   </header>
 
-  <!-- Flight HUD Elements -->
-  <div class="flight-hud">
-    <!-- Top Heading Tape -->
-    <div class="heading-tape-container">
-      <div class="heading-tape-current"><span id="hud-hdg-val">184</span>° <span id="hud-hdg-cardinal">S</span></div>
-      <div class="heading-tape-ticks">
-        <div class="heading-needle"></div>
-        <div style="font-size:9px; font-family:var(--font-mono); color:var(--text-muted); display:flex; gap:22px;">
-          <span>160</span><span>170</span><span>S</span><span>190</span><span>200</span>
-        </div>
-      </div>
+  <!-- Mission Toast -->
+  <div class="mission-toast" id="mission-toast">
+    <i class="fa-solid fa-compass"></i>
+    <span id="txt-mission-desc">الهدف النشط: استكشاف المداخن البركانية وأخذ عينة قاعية من أخدود البحر الأحمر</span>
+  </div>
+
+  <!-- Primary Center Reticle -->
+  <div class="center-hud-ring">
+    <div class="hud-pip"></div>
+  </div>
+
+  <!-- Depth Gauge Tape Float -->
+  <div class="hud-depth-gauge">
+    <span class="sub">DEPTH (العمق)</span>
+    <span class="val" id="float-depth">-452.4m</span>
+    <span class="sub" style="color:var(--emerald-glow);" id="float-dvl">DVL: 14.8m ALT</span>
+  </div>
+
+  <!-- TACTILE ON-SCREEN PILOT CONSOLE (Direct Mouse / Touch Control) -->
+  <div class="pilot-console-overlay">
+    <div class="console-header">
+      <h3><i class="fa-solid fa-gamepad"></i> <span id="txt-console-title">لوحة قيادة الغواصة المباشرة</span></h3>
+      <span style="font-size:10px; font-family:var(--font-mono); color:var(--emerald-glow);" id="console-status">ONLINE 6-DoF</span>
     </div>
 
-    <!-- Center Reticle & Pitch -->
-    <div class="hud-reticle">
-      <div class="hud-reticle-circle"></div>
-      <div class="hud-reticle-center"></div>
-      <div class="hud-pitch-ladder">
-        <div class="pitch-line"><span class="bar"></span><span>+10°</span><span class="bar"></span></div>
-        <div class="pitch-line"><span class="bar"></span><span>00°</span><span class="bar"></span></div>
-        <div class="pitch-line"><span class="bar"></span><span>-10°</span><span class="bar"></span></div>
+    <!-- 4-Way Directional D-Pad -->
+    <div class="dpad-cluster">
+      <div></div>
+      <button type="button" class="btn-dpad" id="btn-fwd" onmousedown="setKey('w', true)" onmouseup="setKey('w', false)" ontouchstart="setKey('w', true)" ontouchend="setKey('w', false)">
+        <i class="fa-solid fa-chevron-up"></i>
+        <span class="sub">FORWARD</span>
+      </button>
+      <div></div>
+
+      <button type="button" class="btn-dpad" id="btn-left" onmousedown="setKey('q', true)" onmouseup="setKey('q', false)" ontouchstart="setKey('q', true)" ontouchend="setKey('q', false)">
+        <i class="fa-solid fa-rotate-left"></i>
+        <span class="sub">YAW L</span>
+      </button>
+      <div class="btn-dpad center">
+        <i class="fa-solid fa-anchor"></i>
+        <span>HOVER</span>
       </div>
+      <button type="button" class="btn-dpad" id="btn-right" onmousedown="setKey('e', true)" onmouseup="setKey('e', false)" ontouchstart="setKey('e', true)" ontouchend="setKey('e', false)">
+        <i class="fa-solid fa-rotate-right"></i>
+        <span class="sub">YAW R</span>
+      </button>
+
+      <div></div>
+      <button type="button" class="btn-dpad" id="btn-back" onmousedown="setKey('s', true)" onmouseup="setKey('s', false)" ontouchstart="setKey('s', true)" ontouchend="setKey('s', false)">
+        <i class="fa-solid fa-chevron-down"></i>
+        <span class="sub">REVERSE</span>
+      </button>
+      <div></div>
     </div>
 
-    <!-- Right Side: Depth Gauge -->
-    <div class="depth-tape-wrap">
-      <span class="depth-title" id="txt-depth-lbl">العمق</span>
-      <div class="depth-value-box" id="hud-depth-val">-452.4</div>
-      <div class="depth-meter-bar">
-        <div class="depth-meter-fill" id="hud-depth-fill"></div>
-      </div>
-      <span class="depth-unit">METERS (م)</span>
+    <!-- Vertical Heave Depth Controls -->
+    <div class="depth-control-row">
+      <button type="button" class="btn-depth" onmousedown="setKey('r', true)" onmouseup="setKey('r', false)" ontouchstart="setKey('r', true)" ontouchend="setKey('r', false)">
+        <i class="fa-solid fa-arrow-up"></i>
+        <span id="txt-ascend">صعود للسطح</span>
+      </button>
+      <button type="button" class="btn-depth" onmousedown="setKey('f', true)" onmouseup="setKey('f', false)" ontouchstart="setKey('f', true)" ontouchend="setKey('f', false)">
+        <i class="fa-solid fa-arrow-down"></i>
+        <span id="txt-descend">غوص للقاع</span>
+      </button>
     </div>
 
-    <!-- Left Side: Altitude (DVL) Gauge -->
-    <div class="dvl-tape-wrap">
-      <span class="depth-title" id="txt-alt-lbl">الارتفاع DVL</span>
-      <div class="depth-value-box" style="color:var(--accent-emerald); border-color:var(--accent-emerald);" id="hud-alt-val">14.8</div>
-      <div class="depth-meter-bar">
-        <div class="depth-meter-fill" style="background:var(--accent-emerald);" id="hud-alt-fill"></div>
-      </div>
-      <span class="depth-unit" id="txt-alt-sub">عن القاع (م)</span>
+    <!-- Quick Tool Triggers -->
+    <div style="display:flex; gap:6px; margin-top:8px;">
+      <button type="button" class="btn-action" style="flex:1; padding:7px 6px; font-size:11px; justify-content:center;" onclick="triggerSampling()">
+        <i class="fa-solid fa-vial"></i> <span id="txt-tool-sample">أخذ عينة قاعية</span>
+      </button>
+      <button type="button" class="btn-action" style="flex:1; padding:7px 6px; font-size:11px; justify-content:center;" onclick="toggleLights()">
+        <i class="fa-solid fa-lightbulb"></i> <span id="txt-tool-lights">كشافات LED</span>
+      </button>
     </div>
   </div>
 
-  <!-- Bottom Cockpit Dock Panels -->
-  <main class="rov-dock">
-    
-    <!-- Dock Panel 1: Multibeam Bathymetric Sonar Radar -->
-    <section class="dock-panel">
-      <div class="panel-hdr">
-        <h3><i class="fa-solid fa-satellite-dish"></i> <span id="txt-sonar-title">السونار الصوتي المتعدد</span></h3>
-        <span class="badge" id="txt-sonar-mode">PPI 360° SWEEP</span>
+  <!-- Right Instrument Dock (Sonar & Sensors) -->
+  <div class="cockpit-dock-right">
+    <div class="dock-card">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h4 style="font-size:12px; font-weight:800; color:#ffffff;"><i class="fa-solid fa-satellite-dish" style="color:var(--cyan-glow);"></i> <span id="txt-sonar-h">السونار الصوتي المتعدد 450kHz</span></h4>
+        <span style="font-size:10px; color:var(--emerald-glow); font-family:var(--font-mono);">360° PPI</span>
       </div>
-      <div class="sonar-radar-box">
-        <canvas id="sonar-canvas" width="280" height="180"></canvas>
+      <div class="sonar-screen-container">
+        <canvas id="sonar-canvas" width="300" height="160"></canvas>
       </div>
-      <div class="sonar-stats-row">
-        <span><span id="txt-range">المدى:</span> <strong>50M</strong></span>
-        <span><span id="txt-frequency">التردد:</span> <strong>450 kHz</strong></span>
-        <span><span id="txt-targets">الأهداف:</span> <strong style="color:var(--accent-emerald);" id="sonar-target-count">3 DETECTED</strong></span>
-      </div>
-    </section>
-
-    <!-- Dock Panel 2: 5-DoF Manipulator Arm & Subsea Tools -->
-    <section class="dock-panel">
-      <div class="panel-hdr">
-        <h3><i class="fa-solid fa-hand-holding-hand"></i> <span id="txt-arm-title">الذراع الهيدروليكية وأدوات الأعماق</span></h3>
-        <span class="badge" id="txt-arm-status">READY · جاهز</span>
-      </div>
-      <div class="arm-controls-grid">
-        <div class="arm-slider-group">
-          <label><span>دوران القاعدة</span><span id="lbl-arm-yaw">0°</span></label>
-          <input type="range" id="slider-arm-yaw" min="-90" max="90" value="0" oninput="updateArmJoints()">
-        </div>
-        <div class="arm-slider-group">
-          <label><span>مفصل الكتف</span><span id="lbl-arm-shoulder">25°</span></label>
-          <input type="range" id="slider-arm-shoulder" min="-45" max="75" value="25" oninput="updateArmJoints()">
-        </div>
-        <div class="arm-slider-group">
-          <label><span>مفصل الكوع</span><span id="lbl-arm-elbow">-30°</span></label>
-          <input type="range" id="slider-arm-elbow" min="-80" max="45" value="-30" oninput="updateArmJoints()">
-        </div>
-        <div class="arm-slider-group">
-          <label><span>الملقط القابض</span><span id="lbl-arm-claw">OPEN</span></label>
-          <input type="range" id="slider-arm-claw" min="0" max="100" value="30" oninput="updateArmJoints()">
-        </div>
-      </div>
-      <div class="arm-actions-row">
-        <button type="button" class="btn-arm-action" id="btn-arm-sample" onclick="triggerCoreSampling()">
-          <i class="fa-solid fa-vial"></i>
-          <span id="txt-btn-sample">أخذ عينة رسوبية</span>
-        </button>
-        <button type="button" class="btn-arm-action" id="btn-lasers" onclick="toggleGreenLasers()">
-          <i class="fa-solid fa-crosshairs"></i>
-          <span id="txt-btn-laser">ليزر المعايرة (10cm)</span>
-        </button>
-        <button type="button" class="btn-arm-action" id="btn-lights" onclick="toggleSpotlights()">
-          <i class="fa-solid fa-lightbulb"></i>
-          <span id="txt-btn-lights">كشافات LED عالية السطوع</span>
-        </button>
-        <button type="button" class="btn-arm-action" id="btn-reset-arm" onclick="resetArmHome()">
-          <i class="fa-solid fa-rotate-left"></i>
-          <span id="txt-btn-arm-home">الوضع الأصلي</span>
-        </button>
-      </div>
-    </section>
-
-    <!-- Dock Panel 3: Environmental Telemetry & Active Mission -->
-    <section class="dock-panel">
-      <div class="panel-hdr">
-        <h3><i class="fa-solid fa-gauge-high"></i> <span id="txt-ocean-data">القياسات الأوقيانوغرافية</span></h3>
-        <span class="badge" style="color:var(--accent-emerald); border-color:var(--accent-emerald);">RED SEA RIFT</span>
-      </div>
-      <div class="telemetry-metrics-grid">
-        <div class="metric-card">
-          <div class="m-label"><i class="fa-solid fa-temperature-half"></i> <span id="txt-temp-lbl">درجة الحرارة</span></div>
-          <div class="m-val"><span id="val-water-temp">21.8</span> <span class="m-unit">°C</span></div>
-        </div>
-        <div class="metric-card">
-          <div class="m-label"><i class="fa-solid =fa-flask"></i> <span id="txt-salinity-lbl">الملوحة</span></div>
-          <div class="m-val"><span id="val-salinity">41.2</span> <span class="m-unit">PSU</span></div>
-        </div>
-        <div class="metric-card">
-          <div class="m-label"><i class="fa-solid fa-compass"></i> <span id="txt-speed-lbl">السرعة المائية</span></div>
-          <div class="m-val"><span id="val-speed">1.4</span> <span class="m-unit">KNOTS</span></div>
-        </div>
-        <div class="metric-card">
-          <div class="m-label"><i class="fa-solid fa-bolt"></i> <span id="txt-thrust-lbl">قدرة الدوافع</span></div>
-          <div class="m-val"><span id="val-power">42</span> <span class="m-unit">% KW</span></div>
-        </div>
-      </div>
-      
-      <!-- Current Objective -->
-      <div class="mission-bar">
-        <span style="color:var(--text-muted); font-size:10px;" id="txt-task-title">الهدف الحالي:</span>
-        <div class="task-text" id="active-task-desc">
-          <i class="fa-solid fa-circle-check"></i>
-          <span>استكشاف حقل المداخن الحرارية ورصد درجات الحرارة</span>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- Mobile Dual Joypads (Touch) -->
-  <div class="mobile-joypads">
-    <div class="joypad-zone" id="joy-left" title="الحركة الأفقية">
-      <div class="joypad-knob" id="knob-left"></div>
     </div>
-    <div class="joypad-zone" id="joy-right" title="العمق والدوران">
-      <div class="joypad-knob" id="knob-right"></div>
+
+    <div class="dock-card">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h4 style="font-size:12px; font-weight:800; color:#ffffff;"><i class="fa-solid fa-gauge-high" style="color:var(--cyan-glow);"></i> <span id="txt-telemetry-h">حساسات الأعماق الأوقيانوغرافية</span></h4>
+        <span style="font-size:10px; color:var(--cyan-glow); font-family:var(--font-mono);">CALIBRATED</span>
+      </div>
+      <div class="metrics-2x2">
+        <div class="m-box">
+          <div class="m-lbl"><i class="fa-solid fa-water"></i> <span id="txt-sal-lbl">الملوحة</span></div>
+          <div class="m-val" id="val-sal">41.4 <span class="u">PSU</span></div>
+        </div>
+        <div class="m-box">
+          <div class="m-lbl"><i class="fa-solid fa-wind"></i> <span id="txt-turb-lbl">العكارة</span></div>
+          <div class="m-val">0.12 <span class="u">NTU</span></div>
+        </div>
+        <div class="m-box">
+          <div class="m-lbl"><i class="fa-solid fa-gauge"></i> <span id="txt-spd-lbl">السرعة</span></div>
+          <div class="m-val" id="val-spd">1.8 <span class="u">KTS</span></div>
+        </div>
+        <div class="m-box">
+          <div class="m-lbl"><i class="fa-solid fa-bolt"></i> <span id="txt-thr-lbl">قدرة الدوافع</span></div>
+          <div class="m-val" id="val-thr">45 <span class="u">%</span></div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Help & Flight Controls Modal -->
-  <div class="modal-backdrop" id="modal-help">
-    <div class="modal-content">
-      <div class="modal-hdr">
-        <h2 id="modal-hdr-title"><i class="fa-solid fa-gamepad" style="color:var(--accent-cyan);"></i> دليل قيادة الغواصة والاستكشاف</h2>
-        <button type="button" class="btn-close-modal" onclick="closeHelpModal()">✕</button>
+  <!-- Help & Keys Modal -->
+  <div class="modal-veil" id="modal-veil">
+    <div class="modal-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <h2 style="font-size:18px; color:var(--cyan-glow);"><i class="fa-solid fa-circle-info"></i> دليل القيادة واستكشاف الأعماق</h2>
+        <button style="background:none; border:none; color:#ffffff; font-size:22px; cursor:pointer;" onclick="closeModal()">✕</button>
       </div>
-      <p style="font-size:13px; color:var(--text-muted); margin-bottom:14px;" id="modal-desc">
-        تمت هندسة الغواصة للعمل بـ 8 دوافع هيدروديناميكية سداسية درجات الحرية (6-DoF). استخدم لوحة المفاتيح أو أزرار الشاشة للتحكم:
+      <p style="font-size:13px; color:#94a3b8; line-height:1.7; margin-bottom:14px;">
+        تمت برمجة الغواصة لتعمل بنظامين متكاملين:
+        <br>1. <strong>لوحة التحكم اللمسية على الشاشة:</strong> اضغط مباشرة بالفأرة أو اللمس على أزرار الاتجاهات (Forward / Reverse / Yaw / Ascend / Descend).
+        <br>2. <strong>لوحة المفاتيح:</strong> استخدم مفاتيح (W / S / A / D / Q / E / R / F) للقيادة الحرة، أو زر <strong>Auto-Pilot</strong> لتدع الغواصة تأخذك في جولة سينمائية تلقائية!
       </p>
-      <table class="keys-table">
-        <tr><td><span class="kbd-chip">W / S</span></td><td id="k-ws">التحرك للأمام والخلف (Surge Propulsion)</td></tr>
-        <tr><td><span class="kbd-chip">A / D</span></td><td id="k-ad">الانزلاق الجانبي يميناً ويساراً (Sway Vector)</td></tr>
-        <tr><td><span class="kbd-chip">R / F</span></td><td id="k-rf">الغوص للأعماق والصعود نحو السطح (Heave Depth)</td></tr>
-        <tr><td><span class="kbd-chip">Q / E</span></td><td id="k-qe">دوران زاوية البوصلة يميناً ويساراً (Yaw Rotation)</td></tr>
-        <tr><td><span class="kbd-chip">C</span></td><td id="k-c">تبديل زاوية الكاميرا (قمرة القيادة / المطاردة الخارجية / السونار)</td></tr>
-        <tr><td><span class="kbd-chip">L</span></td><td id="k-l">تشغيل / إطفاء كشافات LED القوية</td></tr>
-        <tr><td><span class="kbd-chip">Space</span></td><td id="k-space">إطلاق صابورة الطوارئ للطفو السريع (Emergency Ballast Drop)</td></tr>
-      </table>
-      <div style="margin-top:20px; display:flex; justify-content:flex-end;">
-        <button type="button" class="btn-hud active" onclick="closeHelpModal()" id="btn-modal-ok">فهمت ذلك، بدء الغوص</button>
-      </div>
+      <button type="button" class="btn-action active" style="width:100%; justify-content:center; padding:12px;" onclick="closeModal()">بدء الاستكشاف الآن</button>
     </div>
   </div>
 
   <!-- ========================================================================= -->
-  <!-- JAVASCRIPT: 3D ENGINE, HYDRODYNAMICS, SONAR, AUDIO, TELEMETRY & I18N       -->
+  <!-- THREE.JS 3D ENGINE, PROCEDURAL HIGH-END ROV & UNDERWATER LIFE SCRIPT     -->
   <!-- ========================================================================= -->
   <script>
-    // --- 1. STATE & I18N DICTIONARY ---
+    // --- 1. STATE & I18N ---
     let isEnglish = false;
-    let audioEnabled = true;
-    let cameraMode = 0; // 0: Cockpit/FPV, 1: Chase 3rd Person, 2: Top-down Oceanographer
-    let lightsEnabled = true;
-    let lasersEnabled = true;
-    let isSamplingRoutine = false;
+    let audioOn = true;
+    let cameraMode = 0; // 0: Cockpit/FPV, 1: Chase 3rd person, 2: Free Orbit
+    let isAutoPilot = false;
+    let lightsOn = true;
+    let isSampling = false;
 
     const I18N = {
       ar: {
-        title: 'AbyssalROV 3D',
-        subtitle: 'التوأم الرقمي لمحاكاة غواصات الأعماق الاستكشافية في أخدود البحر الأحمر',
-        missionPhase: 'مرحلة المهمة',
-        phaseVal: 'DIVING · استكشاف الأعماق',
-        pressure: 'الضغط الهيدروستاتيكي',
-        usbl: 'ربط التتبع الصوتي USBL',
-        fps: 'معدل الإطارات FPS',
-        audioOn: 'الصوت: مفعل',
-        audioOff: 'الصوت: مكتوم',
+        sub: 'التوأم الرقمي لمحاكاة غواصات الأعماق الاستكشافية في أخدود البحر الأحمر (-2,800م)',
+        depthLbl: 'العمق الحالي',
+        pressureLbl: 'الضغط الهيدروستاتيكي',
+        tempLbl: 'حرارة المياه',
+        autopilot: 'جولة استكشاف ذاتية (Auto-Pilot)',
+        autopilotActive: 'إيقاف القيادة الذاتية ✕',
         camCockpit: 'الكاميرا: قمرة القيادة',
         camChase: 'الكاميرا: مطاردة خارجية',
-        camTop: 'الكاميرا: نظرة أوقيانوغرافية',
-        controls: 'التحكم',
-        depthLbl: 'العمق',
-        altLbl: 'الارتفاع DVL',
-        altSub: 'عن القاع (م)',
-        sonarTitle: 'السونار الصوتي المتعدد',
-        sonarMode: 'PPI 360° SWEEP',
-        range: 'المدى:',
-        frequency: 'التردد:',
-        targets: 'الأهداف:',
-        armTitle: 'الذراع الهيدروليكية وأدوات الأعماق',
-        armReady: 'READY · جاهز',
-        armSampling: 'SAMPLING · أخذ عينات',
-        btnSample: 'أخذ عينة رسوبية',
-        btnLaser: 'ليزر المعايرة (10cm)',
-        btnLights: 'كشافات LED عالية السطوع',
-        btnArmHome: 'الوضع الأصلي',
-        oceanData: 'القياسات الأوقيانوغرافية',
-        tempLbl: 'درجة الحرارة',
-        salinityLbl: 'الملوحة',
-        speedLbl: 'السرعة المائية',
-        thrustLbl: 'قدرة الدوافع',
-        taskTitle: 'الهدف الحالي:',
-        taskDesc: 'استكشاف حقل المداخن الحرارية ورصد درجات الحرارة',
-        modalHdr: 'دليل قيادة الغواصة والاستكشاف',
-        modalDesc: 'تمت هندسة الغواصة للعمل بـ 8 دوافع هيدروديناميكية سداسية درجات الحرية (6-DoF). استخدم لوحة المفاتيح أو أزرار الشاشة للتحكم:',
-        btnModalOk: 'فهمت ذلك، بدء الغوص'
+        camOrbit: 'الكاميرا: نظرة أوقيانوغرافية',
+        audio: 'الصوت',
+        missionDesc: 'الهدف النشط: استكشاف المداخن البركانية وأخذ عينة قاعية من أخدود البحر الأحمر',
+        consoleTitle: 'لوحة قيادة الغواصة المباشرة',
+        ascend: 'صعود للسطح',
+        descend: 'غوص للقاع',
+        toolSample: 'أخذ عينة قاعية',
+        toolLights: 'كشافات LED',
+        sonarH: 'السونار الصوتي المتعدد 450kHz',
+        telemetryH: 'حساسات الأعماق الأوقيانوغرافية',
+        salLbl: 'الملوحة',
+        turbLbl: 'العكارة',
+        spdLbl: 'السرعة',
+        thrLbl: 'قدرة الدوافع'
       },
       en: {
-        title: 'AbyssalROV 3D',
-        subtitle: 'Red Sea Deep Oceanographic Digital Twin & Subsea Robotics Flight Simulator',
-        missionPhase: 'Mission Phase',
-        phaseVal: 'DIVING · Abyssal Trench',
-        pressure: 'Hydrostatic Pressure',
-        usbl: 'USBL Acoustic Telemetry',
-        fps: 'Frame Rate',
-        audioOn: 'Audio: Enabled',
-        audioOff: 'Audio: Muted',
+        sub: 'Red Sea Deep Oceanographic Digital Twin & Subsea Robotics Flight Simulator (-2,800m)',
+        depthLbl: 'Current Depth',
+        pressureLbl: 'Hydrostatic Pressure',
+        tempLbl: 'Water Temp',
+        autopilot: 'Cinematic Auto-Pilot Tour',
+        autopilotActive: 'Disengage Auto-Pilot ✕',
         camCockpit: 'Cam: Pilot Cockpit',
         camChase: 'Cam: External Chase',
-        camTop: 'Cam: Oceanographic Map',
-        controls: 'Controls',
-        depthLbl: 'Depth',
-        altLbl: 'DVL Altitude',
-        altSub: 'Above Seabed (m)',
-        sonarTitle: 'Multibeam Bathymetric Sonar',
-        sonarMode: 'PPI 360° SWEEP',
-        range: 'Range:',
-        frequency: 'Frequency:',
-        targets: 'Echoes:',
-        armTitle: '5-DoF Manipulator & Subsea Tools',
-        armReady: 'READY',
-        armSampling: 'SAMPLING CORE',
-        btnSample: 'Collect Core Sample',
-        btnLaser: 'Laser Scaler (10cm)',
-        btnLights: 'High-Lumen LED Arrays',
-        btnArmHome: 'Home / Stow Arm',
-        oceanData: 'Oceanographic Telemetry',
-        tempLbl: 'Water Temperature',
-        salinityLbl: 'Salinity',
-        speedLbl: 'Flow Speed',
-        thrustLbl: 'Thrust Vector',
-        taskTitle: 'Active Target:',
-        taskDesc: 'Survey Hydrothermal Vent Field & Profile Thermal Gradient',
-        modalHdr: 'Subsea ROV Flight Manual & Controls',
-        modalDesc: 'Engineered with an 8-thruster 6-DoF hydrodynamic thrust allocation matrix. Use keyboard shortcuts or virtual joysticks to maneuver:',
-        btnModalOk: 'Roger That, Dive In'
+        camOrbit: 'Cam: Oceanographic Orbit',
+        audio: 'Audio',
+        missionDesc: 'Active Objective: Survey Hydrothermal Chimneys & Retrieve Basalt Core Sample',
+        consoleTitle: 'Tactile Pilot Cockpit Console',
+        ascend: 'Heave Ascend',
+        descend: 'Heave Dive',
+        toolSample: 'Core Sample',
+        toolLights: 'LED Lumens',
+        sonarH: 'Multibeam Sonar 450kHz',
+        telemetryH: 'Oceanographic Telemetry',
+        salLbl: 'Salinity',
+        turbLbl: 'Turbidity',
+        spdLbl: 'Speed',
+        thrLbl: 'Thrust'
       }
     };
 
@@ -1138,45 +776,30 @@
       html.dir = isEnglish ? 'ltr' : 'rtl';
       const d = I18N[lang];
 
-      document.getElementById('txt-subtitle').textContent = d.subtitle;
-      document.getElementById('lbl-mission-phase').textContent = d.missionPhase;
-      document.getElementById('val-mission-phase').textContent = d.phaseVal;
-      document.getElementById('lbl-pressure').textContent = d.pressure;
-      document.getElementById('lbl-usbl-link').textContent = d.usbl;
-      document.getElementById('lbl-fps').textContent = d.fps;
-      document.getElementById('txt-controls').textContent = d.controls;
-      document.getElementById('txt-depth-lbl').textContent = d.depthLbl;
-      document.getElementById('txt-alt-lbl').textContent = d.altLbl;
-      document.getElementById('txt-alt-sub').textContent = d.altSub;
-      document.getElementById('txt-sonar-title').textContent = d.sonarTitle;
-      document.getElementById('txt-range').textContent = d.range;
-      document.getElementById('txt-frequency').textContent = d.frequency;
-      document.getElementById('txt-targets').textContent = d.targets;
-      document.getElementById('txt-arm-title').textContent = d.armTitle;
-      document.getElementById('txt-btn-sample').textContent = d.btnSample;
-      document.getElementById('txt-btn-laser').textContent = d.btnLaser;
-      document.getElementById('txt-btn-lights').textContent = d.btnLights;
-      document.getElementById('txt-btn-arm-home').textContent = d.btnArmHome;
-      document.getElementById('txt-ocean-data').textContent = d.oceanData;
-      document.getElementById('txt-temp-lbl').textContent = d.tempLbl;
-      document.getElementById('txt-salinity-lbl').textContent = d.salinityLbl;
-      document.getElementById('txt-speedLbl') && (document.getElementById('txt-speedLbl').textContent = d.speedLbl);
-      document.getElementById('txt-thrust-lbl').textContent = d.thrustLbl;
-      document.getElementById('txt-task-title').textContent = d.taskTitle;
-      document.getElementById('active-task-desc').querySelector('span').textContent = d.taskDesc;
-      document.getElementById('modal-hdr-title').innerHTML = `<i class="fa-solid fa-gamepad" style="color:var(--accent-cyan);"></i> ${d.modalHdr}`;
-      document.getElementById('modal-desc').textContent = d.modalDesc;
-      document.getElementById('btn-modal-ok').textContent = d.btnModalOk;
+      document.getElementById('txt-sub').textContent = d.sub;
+      document.getElementById('lbl-depth').textContent = d.depthLbl;
+      document.getElementById('lbl-pressure').textContent = d.pressureLbl;
+      document.getElementById('lbl-temp').textContent = d.tempLbl;
+      document.getElementById('txt-mission-desc').textContent = d.missionDesc;
+      document.getElementById('txt-console-title').textContent = d.consoleTitle;
+      document.getElementById('txt-ascend').textContent = d.ascend;
+      document.getElementById('txt-descend').textContent = d.descend;
+      document.getElementById('txt-tool-sample').textContent = d.toolSample;
+      document.getElementById('txt-tool-lights').textContent = d.toolLights;
+      document.getElementById('txt-sonar-h').textContent = d.sonarH;
+      document.getElementById('txt-telemetry-h').textContent = d.telemetryH;
+      document.getElementById('txt-sal-lbl').textContent = d.salLbl;
+      document.getElementById('txt-turb-lbl').textContent = d.turbLbl;
+      document.getElementById('txt-spd-lbl').textContent = d.spdLbl;
+      document.getElementById('txt-thr-lbl').textContent = d.thrLbl;
 
-      updateCamButtonLabel();
-      updateAudioButtonLabel();
-      document.getElementById('btn-lang').querySelector('.txt').textContent = isEnglish ? 'العربية' : 'English';
+      updateCamLabel();
+      document.getElementById('btn-autopilot').querySelector('span').textContent = isAutoPilot ? d.autopilotActive : d.autopilot;
+      document.getElementById('btn-lang').querySelector('span').textContent = isEnglish ? 'العربية' : 'English';
     }
 
-    // --- 2. SYNTHESIZED WEB AUDIO API SOUND ENGINE ---
+    // --- 2. AUDIO SYNTHESIS ---
     let audioCtx = null;
-    let hullHumOsc = null;
-    let thrusterOsc = null;
     let thrusterGain = null;
 
     function initAudio() {
@@ -1185,914 +808,660 @@
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         audioCtx = new AudioContext();
 
-        // Hull Deep Hum (Low-frequency ambient submersible resonance)
-        hullHumOsc = audioCtx.createOscillator();
-        const hullGain = audioCtx.createGain();
-        const hullFilter = audioCtx.createBiquadFilter();
+        // Hull hum
+        const hum = audioCtx.createOscillator();
+        const humGain = audioCtx.createGain();
+        hum.frequency.setValueAtTime(55, audioCtx.currentTime);
+        humGain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+        hum.connect(humGain);
+        humGain.connect(audioCtx.destination);
+        hum.start();
 
-        hullHumOsc.type = 'sine';
-        hullHumOsc.frequency.setValueAtTime(55, audioCtx.currentTime); // 55Hz Low A
-        hullFilter.type = 'lowpass';
-        hullFilter.frequency.setValueAtTime(120, audioCtx.currentTime);
-        hullGain.gain.setValueAtTime(audioEnabled ? 0.08 : 0, audioCtx.currentTime);
-
-        hullHumOsc.connect(hullFilter);
-        hullFilter.connect(hullGain);
-        hullGain.connect(audioCtx.destination);
-        hullHumOsc.start();
-
-        // Dynamic Thruster Cavitation Noise & Sound
-        thrusterOsc = audioCtx.createOscillator();
+        // Thruster cavitation
+        const thrOsc = audioCtx.createOscillator();
         thrusterGain = audioCtx.createGain();
-        const thrusterFilter = audioCtx.createBiquadFilter();
-
-        thrusterOsc.type = 'sawtooth';
-        thrusterOsc.frequency.setValueAtTime(110, audioCtx.currentTime);
-        thrusterFilter.type = 'bandpass';
-        thrusterFilter.frequency.setValueAtTime(320, audioCtx.currentTime);
+        thrOsc.type = 'sawtooth';
+        thrOsc.frequency.setValueAtTime(110, audioCtx.currentTime);
         thrusterGain.gain.setValueAtTime(0, audioCtx.currentTime);
-
-        thrusterOsc.connect(thrusterFilter);
-        thrusterFilter.connect(thrusterGain);
+        thrOsc.connect(thrusterGain);
         thrusterGain.connect(audioCtx.destination);
-        thrusterOsc.start();
+        thrOsc.start();
 
-        // Periodic Sonar Ping every 4 seconds
-        setInterval(playSonarPing, 4000);
-      } catch (e) {
-        console.warn('Web Audio not supported or blocked:', e);
-      }
-    }
-
-    function playSonarPing() {
-      if (!audioEnabled || !audioCtx) return;
-      try {
-        const now = audioCtx.currentTime;
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(1850, now); // 1.85 kHz crisp sonar ping
-        osc.frequency.exponentialRampToValueAtTime(1400, now + 0.35);
-
-        gain.gain.setValueAtTime(0.09, now);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.2);
-
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-
-        osc.start(now);
-        osc.stop(now + 1.25);
-      } catch (e) {}
-    }
-
-    function playBeep(freq = 880, duration = 0.15) {
-      if (!audioEnabled || !audioCtx) return;
-      try {
-        const now = audioCtx.currentTime;
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.frequency.setValueAtTime(freq, now);
-        gain.gain.setValueAtTime(0.12, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start(now);
-        osc.stop(now + duration);
+        // Sonar ping interval
+        setInterval(() => {
+          if (!audioOn || !audioCtx) return;
+          const osc = audioCtx.createOscillator();
+          const g = audioCtx.createGain();
+          osc.frequency.setValueAtTime(1750, audioCtx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(1300, audioCtx.currentTime + 0.35);
+          g.gain.setValueAtTime(0.08, audioCtx.currentTime);
+          g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.2);
+          osc.connect(g);
+          g.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 1.2);
+        }, 4500);
       } catch (e) {}
     }
 
     function toggleAudio() {
-      audioEnabled = !audioEnabled;
-      if (!audioCtx && audioEnabled) initAudio();
-      updateAudioButtonLabel();
-      playBeep(audioEnabled ? 900 : 450, 0.1);
+      audioOn = !audioOn;
+      if (!audioCtx && audioOn) initAudio();
+      document.getElementById('btn-audio').classList.toggle('active', audioOn);
     }
 
-    function updateAudioButtonLabel() {
-      const d = I18N[isEnglish ? 'en' : 'ar'];
-      const btn = document.getElementById('btn-audio-toggle');
-      btn.querySelector('.txt').textContent = audioEnabled ? d.audioOn : d.audioOff;
-      btn.querySelector('i').className = audioEnabled ? 'fa-solid fa-volume-high' : 'fa-solid fa-volume-xmark';
+    function playBeep(freq = 800) {
+      if (!audioOn || !audioCtx) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        g.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+        osc.connect(g);
+        g.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.15);
+      } catch(e) {}
     }
 
-    // --- 3. THREE.JS SCENE, ROV VEHICLE & BATHYMETRY ---
+    // --- 3. THREE.JS GRAPHICS & WORLD ---
     let scene, camera, renderer;
-    let rovGroup, armGroup, clawLeft, clawRight;
+    let rovGroup, armGroup, clawL, clawR;
     let propMeshes = [];
-    let spotlights = [];
-    let greenLasers = [];
-    let marineSnowParticles;
-    let seabedMesh;
-    let ventParticles = [];
+    let spotLeft, spotRight;
+    let bubbleParticles, snowParticles;
+    let jellyfishList = [];
+    let ventPlumes = [];
 
-    // Hydrodynamic ROV Position & Velocity Physics
-    const rovState = {
+    const keys = { w: false, s: false, a: false, d: false, q: false, e: false, r: false, f: false };
+
+    function setKey(k, state) {
+      initAudio();
+      keys[k] = state;
+      const el = document.getElementById('btn-' + k);
+      if (el) el.classList.toggle('pressed', state);
+      if (state) playBeep(650);
+    }
+
+    const rov = {
       x: 0,
-      y: -450, // Starting at 450m depth in the Red Sea
+      y: -450,
       z: 0,
       vx: 0,
       vy: 0,
       vz: 0,
-      heading: 184, // degrees
+      heading: 180, // degrees
       pitch: 0,
       roll: 0,
-      thrustPower: 0,
-      seabedAltitude: 14.8
+      targetDepth: -450
     };
 
-    const keys = {
-      w: false, s: false,
-      a: false, d: false,
-      r: false, f: false,
-      q: false, e: false
-    };
-
-    function initThreeScene() {
+    function initThree() {
       const canvas = document.getElementById('webgl-canvas');
-      renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+      renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.1;
+      renderer.toneMappingExposure = 1.35;
       renderer.shadowMap.enabled = true;
-      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
       scene = new THREE.Scene();
-      // Abyssal twilight ocean fog gradient
-      scene.background = new THREE.Color(0x010c18);
-      scene.fog = new THREE.FogExp2(0x010e1d, 0.024);
+      scene.background = new THREE.Color(0x010c1c);
+      scene.fog = new THREE.FogExp2(0x010f22, 0.022);
 
-      // Cameras
-      camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 500);
+      camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 400);
 
-      // Ambient & Deep Sea Lighting
-      const ambientLight = new THREE.AmbientLight(0x0a223a, 1.2);
-      scene.add(ambientLight);
+      // Deep Sea Atmospheric Lights
+      const ambient = new THREE.AmbientLight(0x082b4a, 1.8);
+      scene.add(ambient);
 
-      const surfaceDappledLight = new THREE.DirectionalLight(0x00e5ff, 0.6);
-      surfaceDappledLight.position.set(0, 100, 0);
-      scene.add(surfaceDappledLight);
+      const blueSun = new THREE.DirectionalLight(0x00f0ff, 0.8);
+      blueSun.position.set(0, 150, 0);
+      scene.add(blueSun);
 
-      // Build 3D Entities
-      buildSeabed();
-      buildHydrothermalVents();
-      buildSunkenArtifacts();
-      buildMarineSnow();
-      buildROVModel();
+      // Procedural Ocean World
+      createBathymetricTerrain();
+      createHydrothermalChimneys();
+      createHistoricShipwreck();
+      createBioluminescentJellyfish();
+      createMarineParticles();
 
-      window.addEventListener('resize', onWindowResize);
-      setupControls();
+      // High-End Detailed ROV Subsea Vehicle
+      createHighEndROV();
+
+      window.addEventListener('resize', onResize);
+      setupKeyboard();
     }
 
-    // Procedural Red Sea Bathymetric Seabed with Canyons
-    function buildSeabed() {
-      const seabedGeo = new THREE.PlaneGeometry(350, 350, 90, 90);
-      seabedGeo.rotateX(-Math.PI / 2);
-
-      const pos = seabedGeo.attributes.position;
+    // Bathymetric Canyon Terrain
+    function createBathymetricTerrain() {
+      const geo = new THREE.PlaneGeometry(450, 450, 80, 80);
+      geo.rotateX(-Math.PI / 2);
+      const pos = geo.attributes.position;
       for (let i = 0; i < pos.count; i++) {
         const x = pos.getX(i);
         const z = pos.getZ(i);
-        // Multiscale procedural noise for canyons & dunes
-        const y = Math.sin(x * 0.04) * Math.cos(z * 0.04) * 5.5
-                + Math.sin(x * 0.1 + 1.2) * 2.2
-                - (Math.pow(x * 0.015, 2) + Math.pow(z * 0.015, 2)) * 1.5;
-        pos.setY(i, y - 468); // Seabed rests around -468m
+        const y = Math.sin(x * 0.03) * Math.cos(z * 0.03) * 7.5
+                + Math.sin(x * 0.08) * 3.0
+                - (Math.pow(x * 0.012, 2) + Math.pow(z * 0.012, 2)) * 1.8;
+        pos.setY(i, y - 468);
       }
-      seabedGeo.computeVertexNormals();
+      geo.computeVertexNormals();
 
-      const seabedMat = new THREE.MeshStandardMaterial({
-        color: 0x092636,
-        roughness: 0.92,
-        metalness: 0.08,
+      const mat = new THREE.MeshStandardMaterial({
+        color: 0x06283d,
+        roughness: 0.85,
+        metalness: 0.15,
         flatShading: true
       });
-
-      seabedMesh = new THREE.Mesh(seabedGeo, seabedMat);
-      seabedMesh.receiveShadow = true;
-      scene.add(seabedMesh);
+      const seabed = new THREE.Mesh(geo, mat);
+      seabed.receiveShadow = true;
+      scene.add(seabed);
     }
 
     // Hydrothermal Black Smoker Vent Chimneys
-    function buildHydrothermalVents() {
-      const ventLocations = [
-        { x: -35, z: -40, h: 14 },
-        { x: 45, z: -25, h: 18 },
-        { x: -15, z: 50, h: 12 }
+    function createHydrothermalChimneys() {
+      const ventPositions = [
+        { x: -30, z: -35, h: 18 },
+        { x: 38, z: -20, h: 22 },
+        { x: -12, z: 45, h: 15 }
       ];
 
-      ventLocations.forEach(loc => {
-        const chimneyGeo = new THREE.CylinderGeometry(0.8, 2.5, loc.h, 12);
-        const chimneyMat = new THREE.MeshStandardMaterial({
-          color: 0x1f2937,
-          roughness: 0.95,
-          metalness: 0.2
-        });
-        const chimney = new THREE.Mesh(chimneyGeo, chimneyMat);
-        chimney.position.set(loc.x, -468 + loc.h / 2, loc.z);
+      ventPositions.forEach(vp => {
+        const geo = new THREE.CylinderGeometry(1.0, 3.2, vp.h, 14);
+        const mat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.95 });
+        const chimney = new THREE.Mesh(geo, mat);
+        chimney.position.set(vp.x, -468 + vp.h / 2, vp.z);
         scene.add(chimney);
 
-        // Glowing mineral vent mouth
-        const mouthLight = new THREE.PointLight(0xff5500, 2.5, 25);
-        mouthLight.position.set(loc.x, -468 + loc.h + 0.5, loc.z);
-        scene.add(mouthLight);
+        // Magma glow light
+        const ventLight = new THREE.PointLight(0xff5500, 3.5, 35);
+        ventLight.position.set(vp.x, -468 + vp.h + 1, vp.z);
+        scene.add(ventLight);
 
-        // Vent Smoke Particle Emitter
-        const smokeCount = 45;
-        const smokeGeo = new THREE.BufferGeometry();
-        const smokePos = new Float32Array(smokeCount * 3);
-        for (let i = 0; i < smokeCount; i++) {
-          smokePos[i * 3] = loc.x + (Math.random() - 0.5) * 1.5;
-          smokePos[i * 3 + 1] = -468 + loc.h + Math.random() * 8;
-          smokePos[i * 3 + 2] = loc.z + (Math.random() - 0.5) * 1.5;
+        // Particle Plume
+        const pCount = 50;
+        const pGeo = new THREE.BufferGeometry();
+        const pPos = new Float32Array(pCount * 3);
+        for (let i = 0; i < pCount; i++) {
+          pPos[i * 3] = vp.x + (Math.random() - 0.5) * 2;
+          pPos[i * 3 + 1] = -468 + vp.h + Math.random() * 10;
+          pPos[i * 3 + 2] = vp.z + (Math.random() - 0.5) * 2;
         }
-        smokeGeo.setAttribute('position', new THREE.BufferAttribute(smokePos, 3));
-        const smokeMat = new THREE.PointsMaterial({
-          color: 0x374151,
-          size: 1.8,
+        pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+        const pMat = new THREE.PointsMaterial({ color: 0x475569, size: 2.2, transparent: true, opacity: 0.6 });
+        const plume = new THREE.Points(pGeo, pMat);
+        scene.add(plume);
+        ventPlumes.push({ plume, originY: -468 + vp.h, h: vp.h });
+      });
+    }
+
+    // Sunken Shipwreck Ribs
+    function createHistoricShipwreck() {
+      const wreckGroup = new THREE.Group();
+      wreckGroup.position.set(22, -467, 18);
+
+      const ribMat = new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.8 });
+      for (let i = 0; i < 7; i++) {
+        const ribGeo = new THREE.TorusGeometry(3.5, 0.25, 8, 16, Math.PI);
+        const rib = new THREE.Mesh(ribGeo, ribMat);
+        rib.position.set(i * 2.2, 0, 0);
+        rib.rotation.y = Math.PI / 2;
+        wreckGroup.add(rib);
+      }
+      scene.add(wreckGroup);
+    }
+
+    // Bioluminescent Pulsing Deep Sea Jellyfish
+    function createBioluminescentJellyfish() {
+      for (let i = 0; i < 14; i++) {
+        const jGroup = new THREE.Group();
+        const bellGeo = new THREE.SphereGeometry(0.65, 12, 12, 0, Math.PI * 2, 0, Math.PI / 2);
+        const bellMat = new THREE.MeshBasicMaterial({
+          color: i % 2 === 0 ? 0x00f0ff : 0x00ffaa,
           transparent: true,
-          opacity: 0.55
+          opacity: 0.75,
+          wireframe: true
         });
-        const smokeParticles = new THREE.Points(smokeGeo, smokeMat);
-        scene.add(smokeParticles);
-        ventParticles.push({ particles: smokeParticles, originY: -468 + loc.h, h: loc.h, x: loc.x, z: loc.z });
-      });
-    }
+        const bell = new THREE.Mesh(bellGeo, bellMat);
+        bell.rotation.x = Math.PI;
+        jGroup.add(bell);
 
-    // Sunken Historic Amphoras & Artifacts
-    function buildSunkenArtifacts() {
-      const amphoraGeo = new THREE.CylinderGeometry(0.4, 0.8, 1.8, 8);
-      const amphoraMat = new THREE.MeshStandardMaterial({ color: 0x854d0e, roughness: 0.85 });
-      for (let i = 0; i < 8; i++) {
-        const amphora = new THREE.Mesh(amphoraGeo, amphoraMat);
-        const ax = 15 + (Math.random() - 0.5) * 18;
-        const az = 12 + (Math.random() - 0.5) * 18;
-        amphora.position.set(ax, -466.8, az);
-        amphora.rotation.set(Math.random() * 0.4, Math.random() * 3, Math.random() * 0.4);
-        scene.add(amphora);
+        // Core glow light
+        const light = new THREE.PointLight(bellMat.color, 0.8, 12);
+        jGroup.add(light);
+
+        jGroup.position.set(
+          (Math.random() - 0.5) * 90,
+          -450 + (Math.random() - 0.5) * 30,
+          (Math.random() - 0.5) * 90
+        );
+
+        scene.add(jGroup);
+        jellyfishList.push({
+          group: jGroup,
+          baseY: jGroup.position.y,
+          speed: 0.8 + Math.random() * 0.5,
+          pulse: Math.random() * Math.PI
+        });
       }
     }
 
-    // Drifting Marine Snow Particulates
-    function buildMarineSnow() {
-      const snowCount = 800;
-      const snowGeo = new THREE.BufferGeometry();
-      const snowPositions = new Float32Array(snowCount * 3);
-      for (let i = 0; i < snowCount; i++) {
-        snowPositions[i * 3] = (Math.random() - 0.5) * 100;
-        snowPositions[i * 3 + 1] = -450 + (Math.random() - 0.5) * 60;
-        snowPositions[i * 3 + 2] = (Math.random() - 0.5) * 100;
+    // Marine Snow Particulates
+    function createMarineParticles() {
+      const count = 900;
+      const geo = new THREE.BufferGeometry();
+      const pos = new Float32Array(count * 3);
+      for (let i = 0; i < count; i++) {
+        pos[i * 3] = (Math.random() - 0.5) * 120;
+        pos[i * 3 + 1] = -450 + (Math.random() - 0.5) * 50;
+        pos[i * 3 + 2] = (Math.random() - 0.5) * 120;
       }
-      snowGeo.setAttribute('position', new THREE.BufferAttribute(snowPositions, 3));
-      const snowMat = new THREE.PointsMaterial({
-        color: 0xa5f3fc,
-        size: 0.35,
-        transparent: true,
-        opacity: 0.65
-      });
-      marineSnowParticles = new THREE.Points(snowGeo, snowMat);
-      scene.add(marineSnowParticles);
+      geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      const mat = new THREE.PointsMaterial({ color: 0x93c5fd, size: 0.4, transparent: true, opacity: 0.65 });
+      snowParticles = new THREE.Points(geo, mat);
+      scene.add(snowParticles);
     }
 
-    // Comprehensive Work-Class ROV 3D Vehicle Model
-    function buildROVModel() {
+    // HIGH-END WORK-CLASS ROV VEHICLE
+    function createHighEndROV() {
       rovGroup = new THREE.Group();
 
-      // 1. Syntactic Foam Flotation Pack (Upper Hull - High Visibility Offshore Yellow)
-      const foamGeo = new THREE.BoxGeometry(2.4, 0.7, 3.4);
-      const foamMat = new THREE.MeshStandardMaterial({
-        color: 0xfacc15, // Bright Offshore Marine Yellow
-        roughness: 0.4,
-        metalness: 0.2
+      // 1. Syntactic Foam Upper Flotation Hull (Offshore Safety Yellow)
+      const hullGeo = new THREE.BoxGeometry(2.5, 0.85, 3.6);
+      const hullMat = new THREE.MeshStandardMaterial({
+        color: 0xfacc15,
+        roughness: 0.35,
+        metalness: 0.3
       });
-      const foamBlock = new THREE.Mesh(foamGeo, foamMat);
-      foamBlock.position.y = 0.55;
-      foamBlock.castShadow = true;
-      rovGroup.add(foamBlock);
+      const hull = new THREE.Mesh(hullGeo, hullMat);
+      hull.position.y = 0.55;
+      hull.castShadow = true;
+      rovGroup.add(hull);
 
-      // Warning stripes on top
-      const stripeGeo = new THREE.PlaneGeometry(2.2, 0.4);
-      const stripeMat = new THREE.MeshBasicMaterial({ color: 0x111827 });
-      const stripe = new THREE.Mesh(stripeGeo, stripeMat);
+      // Carbon fiber accent panels
+      const carbonMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.9, roughness: 0.2 });
+      const carbonPanel = new THREE.Mesh(new THREE.BoxGeometry(2.55, 0.25, 3.0), carbonMat);
+      carbonPanel.position.y = 0.55;
+      rovGroup.add(carbonPanel);
+
+      // Warning hazard stripes
+      const stripe = new THREE.Mesh(new THREE.PlaneGeometry(2.3, 0.4), new THREE.MeshBasicMaterial({ color: 0x111827 }));
       stripe.rotation.x = -Math.PI / 2;
-      stripe.position.set(0, 0.91, 0);
+      stripe.position.set(0, 0.98, 0);
       rovGroup.add(stripe);
 
-      // 2. Tubular Titanium & Carbon Lower Skid Frame
-      const frameMat = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.8, roughness: 0.3 });
-      const skidGeo = new THREE.CylinderGeometry(0.06, 0.06, 3.2, 8);
-      skidGeo.rotateX(Math.PI / 2);
+      // 2. Titanium Lower Tubular Skid Frame
+      const skidMat = new THREE.MeshStandardMaterial({ color: 0x475569, metalness: 0.85, roughness: 0.25 });
+      [-1.15, 1.15].forEach(x => {
+        const skid = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 3.4, 10), skidMat);
+        skid.rotation.x = Math.PI / 2;
+        skid.position.set(x, -0.65, 0);
+        rovGroup.add(skid);
+      });
 
-      const skidLeft = new THREE.Mesh(skidGeo, frameMat);
-      skidLeft.position.set(-1.1, -0.6, 0);
-      rovGroup.add(skidLeft);
-
-      const skidRight = new THREE.Mesh(skidGeo, frameMat);
-      skidRight.position.set(1.1, -0.6, 0);
-      rovGroup.add(skidRight);
-
-      // 3. Central Titanium Electronics Pressure Canister
-      const podGeo = new THREE.CylinderGeometry(0.45, 0.45, 2.2, 16);
-      podGeo.rotateX(Math.PI / 2);
-      const podMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.9, roughness: 0.2 });
-      const pod = new THREE.Mesh(podGeo, podMat);
+      // 3. Central Titanium Pressure Canister
+      const pod = new THREE.Mesh(new THREE.CylinderGeometry(0.48, 0.48, 2.4, 16), carbonMat);
+      pod.rotation.x = Math.PI / 2;
       pod.position.set(0, -0.05, 0);
       rovGroup.add(pod);
 
-      // 4. 8 Ducted Vector Thrusters (4 Vectored Horizontal, 4 Vertical)
-      const thrusterCoords = [
-        // Horizontal Vectored Thrusters at 45°
-        { pos: [-1.2, 0.1, -1.3], rot: [0, Math.PI / 4, 0] },
-        { pos: [1.2, 0.1, -1.3], rot: [0, -Math.PI / 4, 0] },
-        { pos: [-1.2, 0.1, 1.3], rot: [0, -Math.PI / 4, 0] },
-        { pos: [1.2, 0.1, 1.3], rot: [0, Math.PI / 4, 0] },
-        // Vertical Heave Thrusters
-        { pos: [-1.0, 0.6, -0.6], rot: [Math.PI / 2, 0, 0] },
-        { pos: [1.0, 0.6, -0.6], rot: [Math.PI / 2, 0, 0] },
-        { pos: [-1.0, 0.6, 0.6], rot: [Math.PI / 2, 0, 0] },
-        { pos: [1.0, 0.6, 0.6], rot: [Math.PI / 2, 0, 0] }
+      // 4. 8 Vector Thrusters with Brass Impellers
+      const thrusterOffsets = [
+        // 4 Horizontal Vectored Thrusters at 45°
+        { pos: [-1.25, 0.1, -1.3], rot: [0, Math.PI / 4, 0] },
+        { pos: [1.25, 0.1, -1.3], rot: [0, -Math.PI / 4, 0] },
+        { pos: [-1.25, 0.1, 1.3], rot: [0, -Math.PI / 4, 0] },
+        { pos: [1.25, 0.1, 1.3], rot: [0, Math.PI / 4, 0] },
+        // 4 Vertical Heave Thrusters
+        { pos: [-1.05, 0.65, -0.6], rot: [Math.PI / 2, 0, 0] },
+        { pos: [1.05, 0.65, -0.6], rot: [Math.PI / 2, 0, 0] },
+        { pos: [-1.05, 0.65, 0.6], rot: [Math.PI / 2, 0, 0] },
+        { pos: [1.05, 0.65, 0.6], rot: [Math.PI / 2, 0, 0] }
       ];
 
-      thrusterCoords.forEach(tc => {
-        const ductGeo = new THREE.CylinderGeometry(0.24, 0.24, 0.45, 12, 1, true);
-        const ductMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.6, side: THREE.DoubleSide });
-        const duct = new THREE.Mesh(ductGeo, ductMat);
-        duct.position.set(...tc.pos);
-        duct.rotation.set(...tc.rot);
+      thrusterOffsets.forEach(to => {
+        const duct = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.26, 0.26, 0.48, 14, 1, true),
+          new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.7, side: THREE.DoubleSide })
+        );
+        duct.position.set(...to.pos);
+        duct.rotation.set(...to.rot);
 
-        // Propeller inside
-        const propGeo = new THREE.BoxGeometry(0.36, 0.05, 0.05);
-        const propMat = new THREE.MeshBasicMaterial({ color: 0x00e5ff });
-        const prop = new THREE.Mesh(propGeo, propMat);
+        // Brass propeller blade
+        const prop = new THREE.Mesh(
+          new THREE.BoxGeometry(0.42, 0.06, 0.06),
+          new THREE.MeshStandardMaterial({ color: 0x00f0ff, emissive: 0x00f0ff, emissiveIntensity: 0.5 })
+        );
         duct.add(prop);
         propMeshes.push(prop);
 
         rovGroup.add(duct);
       });
 
-      // 5. Dual Ultra-Bright Forward LED Spotlights
-      const lightGeo = new THREE.CylinderGeometry(0.12, 0.15, 0.22, 12);
-      lightGeo.rotateX(Math.PI / 2);
-      const lightMat = new THREE.MeshStandardMaterial({ color: 0x0ea5e9, emissive: 0x00e5ff, emissiveIntensity: 0.8 });
-
-      const lightLeft = new THREE.Mesh(lightGeo, lightMat);
-      lightLeft.position.set(-0.8, 0.1, -1.65);
-      rovGroup.add(lightLeft);
-
-      const lightRight = new THREE.Mesh(lightGeo, lightMat);
-      lightRight.position.set(0.8, 0.1, -1.65);
-      rovGroup.add(lightRight);
-
-      // Real Three.js Spotlights casting light cones on seabed
-      const spotLeft = new THREE.SpotLight(0xecfeff, 4.5, 45, Math.PI / 4, 0.5, 1.2);
-      spotLeft.position.set(-0.8, 0.1, -1.7);
-      spotLeft.target.position.set(-0.8, -4, -18);
+      // 5. High-Lumen Dual LED Spotlights (Casting real 3D light beams)
+      spotLeft = new THREE.SpotLight(0xf0fdf4, 6.0, 50, Math.PI / 4, 0.4, 1.2);
+      spotLeft.position.set(-0.85, 0.15, -1.75);
+      spotLeft.target.position.set(-0.85, -3, -18);
       rovGroup.add(spotLeft);
       rovGroup.add(spotLeft.target);
-      spotlights.push(spotLeft);
 
-      const spotRight = new THREE.SpotLight(0xecfeff, 4.5, 45, Math.PI / 4, 0.5, 1.2);
-      spotRight.position.set(0.8, 0.1, -1.7);
-      spotRight.target.position.set(0.8, -4, -18);
+      spotRight = new THREE.SpotLight(0xf0fdf4, 6.0, 50, Math.PI / 4, 0.4, 1.2);
+      spotRight.position.set(0.85, 0.15, -1.75);
+      spotRight.target.position.set(0.85, -3, -18);
       rovGroup.add(spotRight);
       rovGroup.add(spotRight.target);
-      spotlights.push(spotRight);
 
-      // 6. Dual Parallel Green Calibration Lasers (10 cm spacing)
-      const laserMat = new THREE.LineBasicMaterial({ color: 0x00ff66, linewidth: 2 });
-      [-0.15, 0.15].forEach(lx => {
-        const laserPoints = [
-          new THREE.Vector3(lx, -0.1, -1.6),
-          new THREE.Vector3(lx, -1.2, -18)
-        ];
-        const laserGeo = new THREE.BufferGeometry().setFromPoints(laserPoints);
-        const laserLine = new THREE.Line(laserGeo, laserMat);
-        rovGroup.add(laserLine);
-        greenLasers.push(laserLine);
+      // Light lens pods
+      const podMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, emissive: 0x00f0ff, emissiveIntensity: 0.9 });
+      [-0.85, 0.85].forEach(lx => {
+        const lens = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.18, 0.25, 12), podMat);
+        lens.rotation.x = Math.PI / 2;
+        lens.position.set(lx, 0.15, -1.7);
+        rovGroup.add(lens);
       });
 
-      // 7. Pan-Tilt HD Camera Dome
-      const camGeo = new THREE.SphereGeometry(0.25, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2);
-      const camMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.9, roughness: 0.1 });
-      const camDome = new THREE.Mesh(camGeo, camMat);
-      camDome.position.set(0, 0.15, -1.65);
-      camDome.rotation.x = -Math.PI / 2;
-      rovGroup.add(camDome);
+      // 6. HD Pan-Tilt Camera Dome with pilot lens
+      const dome = new THREE.Mesh(
+        new THREE.SphereGeometry(0.28, 16, 16),
+        new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.95, roughness: 0.05 })
+      );
+      dome.position.set(0, 0.2, -1.75);
+      rovGroup.add(dome);
 
-      // 8. 5-Axis Hydraulic Manipulator Robotic Arm
+      // 7. 5-Axis Hydraulic Manipulator Arm
       armGroup = new THREE.Group();
-      armGroup.position.set(0.75, -0.3, -1.4);
+      armGroup.position.set(0.85, -0.25, -1.45);
+      const armMat = new THREE.MeshStandardMaterial({ color: 0x64748b, metalness: 0.75, roughness: 0.3 });
 
-      // Shoulder Joint
-      const shoulderGeo = new THREE.CylinderGeometry(0.12, 0.12, 0.22, 10);
-      const armMat = new THREE.MeshStandardMaterial({ color: 0x475569, metalness: 0.7, roughness: 0.3 });
-      const shoulder = new THREE.Mesh(shoulderGeo, armMat);
-      armGroup.add(shoulder);
+      const link1 = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.7, 0.16), armMat);
+      link1.position.y = 0.35;
+      armGroup.add(link1);
 
-      // Upper Arm Link
-      const upperLinkGeo = new THREE.BoxGeometry(0.14, 0.65, 0.14);
-      upperLinkGeo.translate(0, 0.32, 0);
-      const upperLink = new THREE.Mesh(upperLinkGeo, armMat);
-      armGroup.add(upperLink);
+      const link2 = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.6, 0.14), armMat);
+      link2.position.set(0, 0.7, 0.1);
+      armGroup.add(link2);
 
-      // Forearm Link
-      const forearmLinkGeo = new THREE.BoxGeometry(0.12, 0.55, 0.12);
-      forearmLinkGeo.translate(0, 0.27, 0);
-      const forearmLink = new THREE.Mesh(forearmLinkGeo, armMat);
-      forearmLink.position.set(0, 0.65, 0);
-      armGroup.add(forearmLink);
+      clawL = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.22, 0.08), podMat);
+      clawL.position.set(-0.06, 1.2, 0.1);
+      armGroup.add(clawL);
 
-      // Claw Gripper Fingers
-      const clawGeo = new THREE.BoxGeometry(0.04, 0.22, 0.08);
-      const clawMat = new THREE.MeshStandardMaterial({ color: 0x00e5ff, metalness: 0.8 });
-      clawLeft = new THREE.Mesh(clawGeo, clawMat);
-      clawLeft.position.set(-0.06, 1.2, 0);
-      armGroup.add(clawLeft);
-
-      clawRight = new THREE.Mesh(clawGeo, clawMat);
-      clawRight.position.set(0.06, 1.2, 0);
-      armGroup.add(clawRight);
+      clawR = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.22, 0.08), podMat);
+      clawR.position.set(0.06, 1.2, 0.1);
+      armGroup.add(clawR);
 
       armGroup.rotation.x = Math.PI / 3;
       rovGroup.add(armGroup);
 
-      // 9. Sediment Core Sample Basket on the Skid
-      const basketGeo = new THREE.BoxGeometry(0.8, 0.25, 0.6);
-      const basketMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, wireframe: true });
-      const basket = new THREE.Mesh(basketGeo, basketMat);
-      basket.position.set(-0.5, -0.45, -1.2);
-      rovGroup.add(basket);
+      // Trailing Umbilical Tether Cable
+      const tetherGeo = new THREE.CylinderGeometry(0.04, 0.04, 15, 8);
+      const tetherMat = new THREE.MeshStandardMaterial({ color: 0xf97316 }); // Orange umbilical
+      const tether = new THREE.Mesh(tetherGeo, tetherMat);
+      tether.position.set(0, 7.5, 3.2);
+      tether.rotation.x = 0.35;
+      rovGroup.add(tether);
 
-      // Set initial ROV position in the world
-      rovGroup.position.set(rovState.x, rovState.y, rovState.z);
+      rovGroup.position.set(rov.x, rov.y, rov.z);
       scene.add(rovGroup);
     }
 
-    // --- 4. CONTROLS & FLIGHT DYNAMICS ---
-    function setupControls() {
+    // --- 4. KEYBOARD & CONTROLS ---
+    function setupKeyboard() {
       window.addEventListener('keydown', e => {
         const k = e.key.toLowerCase();
-        if (keys.hasOwnProperty(k)) keys[k] = true;
+        if (keys.hasOwnProperty(k)) {
+          keys[k] = true;
+          initAudio();
+        }
         if (k === 'c') cycleCamera();
-        if (k === 'l') toggleSpotlights();
-        if (k === ' ') emergencyBallastDrop();
-        initAudio();
+        if (k === 'l') toggleLights();
       });
 
       window.addEventListener('keyup', e => {
         const k = e.key.toLowerCase();
         if (keys.hasOwnProperty(k)) keys[k] = false;
       });
-
-      // Mobile Touch Joystick Simulation
-      setupJoypad('joy-left', 'knob-left', (dx, dy) => {
-        keys.w = dy < -0.25;
-        keys.s = dy > 0.25;
-        keys.a = dx < -0.25;
-        keys.d = dx > 0.25;
-      });
-
-      setupJoypad('joy-right', 'knob-right', (dx, dy) => {
-        keys.r = dy < -0.25; // Heave Up
-        keys.f = dy > 0.25;  // Heave Down
-        keys.q = dx < -0.25; // Yaw Left
-        keys.e = dx > 0.25;  // Yaw Right
-      });
     }
 
-    function setupJoypad(zoneId, knobId, onMove) {
-      const zone = document.getElementById(zoneId);
-      const knob = document.getElementById(knobId);
-      if (!zone || !knob) return;
+    // --- 5. PHYSICS & FLIGHT DYNAMICS ---
+    let autoPilotAngle = 0;
 
-      let active = false;
-      let startX, startY;
+    function updateROV(dt) {
+      if (isAutoPilot) {
+        // Smooth cinematic orbital survey
+        autoPilotAngle += dt * 0.25;
+        rov.x = Math.sin(autoPilotAngle) * 28;
+        rov.z = Math.cos(autoPilotAngle) * 28;
+        rov.heading = (THREE.MathUtils.radToDeg(autoPilotAngle) + 90) % 360;
+        rov.y = -452 + Math.sin(autoPilotAngle * 2) * 4;
+      } else {
+        const surge = 13.0;
+        const heave = 7.5;
+        const yawSpd = 1.35;
+        const drag = 0.93;
 
-      const handleStart = (cx, cy) => {
-        active = true;
-        startX = cx;
-        startY = cy;
-        initAudio();
-      };
+        // Yaw turning
+        if (keys.q) rov.heading += yawSpd * dt * 60;
+        if (keys.e) rov.heading -= yawSpd * dt * 60;
+        rov.heading = (rov.heading + 360) % 360;
 
-      const handleMove = (cx, cy) => {
-        if (!active) return;
-        const dx = cx - startX;
-        const dy = cy - startY;
-        const dist = Math.min(40, Math.hypot(dx, dy));
-        const angle = Math.atan2(dy, dx);
-        const kx = Math.cos(angle) * dist;
-        const ky = Math.sin(angle) * dist;
-        knob.style.transform = `translate(${kx}px, ${ky}px)`;
-        onMove(kx / 40, ky / 40);
-      };
+        const rad = THREE.MathUtils.degToRad(rov.heading);
 
-      const handleEnd = () => {
-        active = false;
-        knob.style.transform = 'translate(0px, 0px)';
-        onMove(0, 0);
-      };
+        // Forward / Reverse
+        if (keys.w) {
+          rov.vx += Math.sin(rad) * surge * dt;
+          rov.vz += Math.cos(rad) * surge * dt;
+        }
+        if (keys.s) {
+          rov.vx -= Math.sin(rad) * surge * dt;
+          rov.vz -= Math.cos(rad) * surge * dt;
+        }
 
-      zone.addEventListener('touchstart', e => handleStart(e.touches[0].clientX, e.touches[0].clientY));
-      zone.addEventListener('touchmove', e => handleMove(e.touches[0].clientX, e.touches[0].clientY));
-      zone.addEventListener('touchend', handleEnd);
+        // Heave Depth
+        if (keys.r) rov.vy += heave * dt; // Ascend
+        if (keys.f) rov.vy -= heave * dt; // Dive
 
-      zone.addEventListener('mousedown', e => handleStart(e.clientX, e.clientY));
-      window.addEventListener('mousemove', e => handleMove(e.clientX, e.clientY));
-      window.addEventListener('mouseup', handleEnd);
-    }
+        // Damping
+        rov.vx *= drag;
+        rov.vy *= drag;
+        rov.vz *= drag;
 
-    // --- 5. ROV HYDRODYNAMIC PHYSICS UPDATE ---
-    function updatePhysics(dt) {
-      const surgeSpeed = 12.0;  // Forward/backward thrust
-      const swaySpeed = 8.5;    // Lateral strafe thrust
-      const heaveSpeed = 6.0;   // Vertical depth thrust
-      const yawSpeed = 1.1;     // Turning angular velocity
-      const damping = 0.94;     // Water fluid resistance
+        rov.x += rov.vx * dt;
+        rov.y += rov.vy * dt;
+        rov.z += rov.vz * dt;
 
-      // Yaw rotation
-      if (keys.q) rovState.heading += yawSpeed * dt * 60;
-      if (keys.e) rovState.heading -= yawSpeed * dt * 60;
-      rovState.heading = (rovState.heading + 360) % 360;
-      const radHdg = THREE.MathUtils.degToRad(rovState.heading);
-
-      // Thrust vectors relative to heading
-      let forwardThrust = 0;
-      let lateralThrust = 0;
-      let verticalThrust = 0;
-
-      if (keys.w) forwardThrust += surgeSpeed;
-      if (keys.s) forwardThrust -= surgeSpeed;
-      if (keys.d) lateralThrust += swaySpeed;
-      if (keys.a) lateralThrust -= swaySpeed;
-      if (keys.r) verticalThrust += heaveSpeed; // Upward
-      if (keys.f) verticalThrust -= heaveSpeed; // Downward
-
-      // Acceleration in world space
-      const sinH = Math.sin(radHdg);
-      const cosH = Math.cos(radHdg);
-
-      rovState.vx += (sinH * forwardThrust + cosH * lateralThrust) * dt;
-      rovState.vz += (cosH * forwardThrust - sinH * lateralThrust) * dt;
-      rovState.vy += verticalThrust * dt;
-
-      // Apply fluid drag
-      rovState.vx *= damping;
-      rovState.vy *= damping;
-      rovState.vz *= damping;
-
-      // Apply displacement
-      rovState.x += rovState.vx * dt;
-      rovState.y += rovState.vy * dt;
-      rovState.z += rovState.vz * dt;
-
-      // Depth clamp: Cannot fly into air (> -2m), cannot crash through seabed (-464m)
-      rovState.y = Math.min(-2, Math.max(-464.5, rovState.y));
-      rovState.seabedAltitude = Math.max(0.5, (rovState.y - (-468)));
-
-      // Subtle dynamic pitch & roll response to motion
-      rovState.pitch = rovState.vz * -0.04;
-      rovState.roll = rovState.vx * 0.05;
-
-      // Update 3D ROV object
-      if (rovGroup) {
-        rovGroup.position.set(rovState.x, rovState.y, rovState.z);
-        rovGroup.rotation.set(rovState.pitch, radHdg, rovState.roll);
+        // Depth limits (-5m to -465m)
+        rov.y = Math.min(-5, Math.max(-465.5, rov.y));
       }
 
-      // Animate thruster propellers & sound
-      const speed = Math.hypot(rovState.vx, rovState.vy, rovState.vz);
-      propMeshes.forEach(p => {
-        p.rotation.x += (speed * 2.5 + 0.3);
-      });
+      // Propeller spin & audio
+      const spd = Math.hypot(rov.vx, rov.vy, rov.vz) + (isAutoPilot ? 2.5 : 0);
+      propMeshes.forEach(p => p.rotation.x += spd * 2.5 + 0.4);
 
-      if (thrusterGain && audioEnabled && audioCtx) {
-        const targetVol = Math.min(0.25, speed * 0.04);
-        thrusterGain.gain.setValueAtTime(targetVol, audioCtx.currentTime);
+      if (thrusterGain && audioOn && audioCtx) {
+        thrusterGain.gain.setValueAtTime(Math.min(0.2, spd * 0.05), audioCtx.currentTime);
       }
 
-      rovState.thrustPower = Math.round(Math.min(100, speed * 18));
+      // Position ROV
+      const radHdg = THREE.MathUtils.degToRad(rov.heading);
+      rovGroup.position.set(rov.x, rov.y, rov.z);
+      rovGroup.rotation.set(rov.vz * -0.04, radHdg, rov.vx * 0.04);
+
+      // Update UI Telemetry
+      const depth = Math.abs(rov.y).toFixed(1);
+      const press = (1 + Math.abs(rov.y) / 10).toFixed(1);
+      document.getElementById('top-depth').textContent = `-${depth} M`;
+      document.getElementById('top-pressure').textContent = `${press} BAR`;
+      document.getElementById('float-depth').textContent = `-${depth}m`;
+      document.getElementById('float-dvl').textContent = `DVL: ${(Math.abs(rov.y) - 440).toFixed(1)}m ALT`;
+      document.getElementById('val-spd').textContent = (spd * 1.94).toFixed(1);
+      document.getElementById('val-thr').textContent = Math.round(Math.min(100, spd * 16));
     }
 
-    // --- 6. CAMERA VIEWS ---
+    // --- 6. CAMERA SYSTEM ---
     function cycleCamera() {
       cameraMode = (cameraMode + 1) % 3;
-      updateCamButtonLabel();
-      playBeep(cameraMode === 0 ? 800 : (cameraMode === 1 ? 1000 : 1200), 0.12);
+      updateCamLabel();
+      playBeep(950);
     }
 
-    function updateCamButtonLabel() {
+    function updateCamLabel() {
       const d = I18N[isEnglish ? 'en' : 'ar'];
       const txt = document.getElementById('txt-cam');
       if (cameraMode === 0) txt.textContent = d.camCockpit;
       else if (cameraMode === 1) txt.textContent = d.camChase;
-      else txt.textContent = d.camTop;
+      else txt.textContent = d.camOrbit;
     }
 
     function updateCamera() {
-      if (!rovGroup) return;
-      const radHdg = THREE.MathUtils.degToRad(rovState.heading);
-
+      const rad = THREE.MathUtils.degToRad(rov.heading);
       if (cameraMode === 0) {
-        // Pilot Cockpit / FPV (Inside front camera housing)
-        const forwardOffset = new THREE.Vector3(0, 0.2, -1.75).applyEuler(rovGroup.rotation);
-        camera.position.copy(rovGroup.position).add(forwardOffset);
-        const lookTarget = new THREE.Vector3(0, 0, -20).applyEuler(rovGroup.rotation);
-        camera.lookAt(camera.position.clone().add(lookTarget));
+        // Cockpit FPV View
+        const fwd = new THREE.Vector3(0, 0.25, -1.8).applyEuler(rovGroup.rotation);
+        camera.position.copy(rovGroup.position).add(fwd);
+        const look = new THREE.Vector3(0, -0.1, -15).applyEuler(rovGroup.rotation);
+        camera.lookAt(camera.position.clone().add(look));
       } else if (cameraMode === 1) {
-        // 3rd Person External Chase Camera
-        const chaseOffset = new THREE.Vector3(0, 2.5, 7.5).applyEuler(new THREE.Euler(0, radHdg, 0));
-        camera.position.copy(rovGroup.position).add(chaseOffset);
-        camera.lookAt(rovGroup.position.clone().add(new THREE.Vector3(0, -0.2, -2)));
+        // External Chase View
+        const back = new THREE.Vector3(0, 2.2, 6.8).applyEuler(new THREE.Euler(0, rad, 0));
+        camera.position.copy(rovGroup.position).add(back);
+        camera.lookAt(rovGroup.position.clone().add(new THREE.Vector3(0, -0.2, -1.5)));
       } else {
-        // Oceanographic High Vantage Point
-        camera.position.set(rovState.x, rovState.y + 28, rovState.z + 18);
+        // High Oceanographic View
+        camera.position.set(rov.x + 20, rov.y + 24, rov.z + 20);
         camera.lookAt(rovGroup.position);
       }
     }
 
-    // --- 7. MULTIBEAM SONAR PPI RADAR CANVAS ---
-    let sonarAngle = 0;
-    function renderSonarRadar() {
-      const canvas = document.getElementById('sonar-canvas');
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      const w = canvas.width;
-      const h = canvas.height;
-      const cx = w / 2;
-      const cy = h / 2;
-      const radius = Math.min(cx, cy) - 10;
+    // --- 7. AUTO-PILOT & ACTIONS ---
+    function toggleAutoPilot() {
+      isAutoPilot = !isAutoPilot;
+      const btn = document.getElementById('btn-autopilot');
+      btn.classList.toggle('active', isAutoPilot);
+      const d = I18N[isEnglish ? 'en' : 'ar'];
+      btn.querySelector('span').textContent = isAutoPilot ? d.autopilotActive : d.autopilot;
+      playBeep(isAutoPilot ? 1200 : 700);
+    }
 
-      // Fade canvas trail
-      ctx.fillStyle = 'rgba(1, 12, 24, 0.18)';
+    function toggleLights() {
+      lightsOn = !lightsOn;
+      spotLeft.intensity = lightsOn ? 6.0 : 0;
+      spotRight.intensity = lightsOn ? 6.0 : 0;
+      playBeep(lightsOn ? 1100 : 500);
+    }
+
+    function triggerSampling() {
+      if (isSampling) return;
+      isSampling = true;
+      playBeep(850);
+      let step = 0;
+      const timer = setInterval(() => {
+        step++;
+        if (step === 1) {
+          armGroup.rotation.x = Math.PI / 2;
+          clawL.position.x = -0.09;
+          clawR.position.x = 0.09;
+        } else if (step === 2) {
+          clawL.position.x = -0.03;
+          clawR.position.x = 0.03;
+        } else if (step >= 3) {
+          clearInterval(timer);
+          armGroup.rotation.x = Math.PI / 3;
+          isSampling = false;
+          alert(isEnglish ? 'Sediment core sample collected successfully!' : 'تم أخذ عينة رسوبية من قاع البحر الأحمر وحفظها بنجاح!');
+        }
+      }, 700);
+    }
+
+    // --- 8. RADAR SONAR CANVAS ---
+    let sonarSweep = 0;
+    function drawSonar() {
+      const c = document.getElementById('sonar-canvas');
+      if (!c) return;
+      const ctx = c.getContext('2d');
+      const w = c.width, h = c.height, cx = w / 2, cy = h / 2, r = Math.min(cx, cy) - 8;
+
+      ctx.fillStyle = 'rgba(1, 14, 28, 0.2)';
       ctx.fillRect(0, 0, w, h);
 
-      // Radar Concentric Circles
-      ctx.strokeStyle = 'rgba(0, 229, 255, 0.25)';
+      // Radar circles
+      ctx.strokeStyle = 'rgba(0, 240, 255, 0.25)';
       ctx.lineWidth = 1;
-      for (let r = 1; r <= 3; r++) {
+      for (let i = 1; i <= 3; i++) {
         ctx.beginPath();
-        ctx.arc(cx, cy, (radius / 3) * r, 0, Math.PI * 2);
+        ctx.arc(cx, cy, (r / 3) * i, 0, Math.PI * 2);
         ctx.stroke();
       }
 
-      // Crosshairs
-      ctx.beginPath();
-      ctx.moveTo(cx, cy - radius); ctx.lineTo(cx, cy + radius);
-      ctx.moveTo(cx - radius, cy); ctx.lineTo(cx + radius, cy);
-      ctx.stroke();
-
-      // Rotating Sonar Sweep Line
-      sonarAngle += 0.035;
-      const sweepX = cx + Math.cos(sonarAngle) * radius;
-      const sweepY = cy + Math.sin(sonarAngle) * radius;
-
-      const grad = ctx.createRadialGradient(cx, cy, 2, cx, cy, radius);
-      grad.addColorStop(0, 'rgba(0, 255, 170, 0.8)');
-      grad.addColorStop(1, 'transparent');
-
-      ctx.strokeStyle = 'rgba(0, 255, 170, 0.9)';
+      // Sweep line
+      sonarSweep += 0.04;
+      ctx.strokeStyle = 'rgba(0, 255, 170, 0.85)';
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.moveTo(cx, cy);
-      ctx.lineTo(sweepX, sweepY);
+      ctx.lineTo(cx + Math.cos(sonarSweep) * r, cy + Math.sin(sonarSweep) * r);
       ctx.stroke();
 
-      // Simulated Target Blips (e.g. vents, reef, shipwreck)
-      const targets = [
-        { angle: 0.8, dist: 0.65, label: 'VENT-01' },
-        { angle: 2.4, dist: 0.45, label: 'REEF-WALL' },
-        { angle: 4.1, dist: 0.82, label: 'WRECK-HULL' }
-      ];
-
-      targets.forEach(t => {
-        const diff = Math.abs((sonarAngle % (Math.PI * 2)) - t.angle);
-        const opacity = Math.max(0.2, 1.0 - diff * 2);
-        const bx = cx + Math.cos(t.angle) * (radius * t.dist);
-        const by = cy + Math.sin(t.angle) * (radius * t.dist);
-
-        ctx.fillStyle = `rgba(0, 229, 255, ${opacity})`;
+      // Blips
+      [0.6, 2.2, 4.2].forEach((ang, idx) => {
+        const bx = cx + Math.cos(ang) * (r * 0.7);
+        const by = cy + Math.sin(ang) * (r * 0.7);
+        ctx.fillStyle = '#00f0ff';
         ctx.beginPath();
-        ctx.arc(bx, by, 4, 0, Math.PI * 2);
+        ctx.arc(bx, by, 3, 0, Math.PI * 2);
         ctx.fill();
-
-        ctx.font = '8px monospace';
-        ctx.fillStyle = `rgba(0, 255, 170, ${opacity})`;
-        ctx.fillText(t.label, bx + 6, by + 3);
       });
     }
 
-    // --- 8. MANIPULATOR ARM & TOOL ACTIONS ---
-    function updateArmJoints() {
-      const yaw = parseFloat(document.getElementById('slider-arm-yaw').value);
-      const shoulder = parseFloat(document.getElementById('slider-arm-shoulder').value);
-      const elbow = parseFloat(document.getElementById('slider-arm-elbow').value);
-      const claw = parseFloat(document.getElementById('slider-arm-claw').value);
-
-      document.getElementById('lbl-arm-yaw').textContent = `${yaw}°`;
-      document.getElementById('lbl-arm-shoulder').textContent = `${shoulder}°`;
-      document.getElementById('lbl-arm-elbow').textContent = `${elbow}°`;
-      document.getElementById('lbl-arm-claw').textContent = claw < 10 ? 'CLOSED' : (claw > 70 ? 'WIDE' : 'GRIP');
-
-      if (armGroup) {
-        armGroup.rotation.y = THREE.MathUtils.degToRad(yaw);
-        armGroup.rotation.x = THREE.MathUtils.degToRad(shoulder);
-      }
-      if (clawLeft && clawRight) {
-        const offset = (claw / 100) * 0.08;
-        clawLeft.position.x = -0.04 - offset;
-        clawRight.position.x = 0.04 + offset;
-      }
-    }
-
-    function triggerCoreSampling() {
-      if (isSamplingRoutine) return;
-      isSamplingRoutine = true;
-      const statusBadge = document.getElementById('txt-arm-status');
-      const d = I18N[isEnglish ? 'en' : 'ar'];
-      statusBadge.textContent = d.armSampling;
-      statusBadge.style.color = 'var(--accent-amber)';
-
-      playBeep(620, 0.3);
-
-      // Automated Sampling Sequence: Lower arm, push core, grasp, return
-      let step = 0;
-      const interval = setInterval(() => {
-        step++;
-        if (step === 1) {
-          document.getElementById('slider-arm-shoulder').value = 65;
-          document.getElementById('slider-arm-elbow').value = 20;
-          updateArmJoints();
-          playBeep(700, 0.2);
-        } else if (step === 2) {
-          document.getElementById('slider-arm-claw').value = 8;
-          updateArmJoints();
-          playBeep(850, 0.25);
-        } else if (step === 3) {
-          document.getElementById('slider-arm-shoulder').value = 15;
-          document.getElementById('slider-arm-elbow').value = -35;
-          updateArmJoints();
-          playBeep(1100, 0.4);
-        } else if (step >= 4) {
-          clearInterval(interval);
-          isSamplingRoutine = false;
-          statusBadge.textContent = d.armReady;
-          statusBadge.style.color = 'var(--accent-emerald)';
-          const msg = isEnglish
-            ? 'Success! Sediment core sample stored in canister #01. Bio-chemical assay ready.'
-            : 'نجاح! تم سحب عينة قاعية وحفظها في الحاوية رقم 01 بنجاح.';
-          alert(msg);
-        }
-      }, 900);
-    }
-
-    function toggleGreenLasers() {
-      lasersEnabled = !lasersEnabled;
-      greenLasers.forEach(l => l.visible = lasersEnabled);
-      const btn = document.getElementById('btn-lasers');
-      btn.classList.toggle('active', lasersEnabled);
-      playBeep(lasersEnabled ? 1250 : 600, 0.1);
-    }
-
-    function toggleSpotlights() {
-      lightsEnabled = !lightsEnabled;
-      spotlights.forEach(s => s.intensity = lightsEnabled ? 4.5 : 0);
-      const btn = document.getElementById('btn-lights');
-      btn.classList.toggle('active', lightsEnabled);
-      playBeep(lightsEnabled ? 1100 : 500, 0.1);
-    }
-
-    function resetArmHome() {
-      document.getElementById('slider-arm-yaw').value = 0;
-      document.getElementById('slider-arm-shoulder').value = 25;
-      document.getElementById('slider-arm-elbow').value = -30;
-      document.getElementById('slider-arm-claw').value = 30;
-      updateArmJoints();
-      playBeep(520, 0.15);
-    }
-
-    function emergencyBallastDrop() {
-      rovState.vy = 22.0; // Rapid ascent burst
-      playBeep(1400, 0.5);
-      const alertMsg = isEnglish
-        ? 'EMERGENCY BALLAST RELEASED: Maximum positive buoyancy achieved. Ascending to surface!'
-        : 'إطلاق صابورة الطوارئ: تم تفعيل الطفو الإيجابي الأقصى والارتقاء السريع للسطح!';
-      alert(alertMsg);
-    }
-
-    // --- 9. TELEMETRY & HUD NUMERICS ---
-    function updateHUDTelemetry() {
-      // Depth & Pressure
-      const depthMeters = Math.abs(rovState.y);
-      const hydrostaticBar = (1 + depthMeters / 10).toFixed(1);
-
-      document.getElementById('hud-depth-val').textContent = `-${depthMeters.toFixed(1)}`;
-      document.getElementById('val-pressure-head').textContent = `${hydrostaticBar} BAR`;
-
-      const depthPct = Math.min(100, (depthMeters / 600) * 100);
-      document.getElementById('hud-depth-fill').style.height = `${depthPct}%`;
-
-      // DVL Altitude
-      document.getElementById('hud-alt-val').textContent = rovState.seabedAltitude.toFixed(1);
-      const altPct = Math.min(100, (rovState.seabedAltitude / 30) * 100);
-      document.getElementById('hud-alt-fill').style.height = `${altPct}%`;
-
-      // Heading Ribbon
-      const hdg = Math.round(rovState.heading);
-      document.getElementById('hud-hdg-val').textContent = hdg;
-      const cardinals = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
-      const cardIdx = Math.round(hdg / 45) % 8;
-      document.getElementById('hud-hdg-cardinal').textContent = cardinals[cardIdx];
-
-      // Environmental Readouts
-      // Deep Red Sea water maintains unique ~21.5°C isothermal profile, rising near vents
-      let temp = 21.5 + Math.sin(rovState.x * 0.05) * 0.4;
-      if (Math.hypot(rovState.x - (-35), rovState.z - (-40)) < 15) {
-        temp += 38.5; // Near hydrothermal chimney
-      }
-      document.getElementById('val-water-temp').textContent = temp.toFixed(1);
-
-      // Salinity
-      let sal = 41.2;
-      if (depthMeters > 460) sal = 185.0; // Deep Red Sea Brine Pool
-      document.getElementById('val-salinity').textContent = sal.toFixed(1);
-
-      // Speed & Thrust
-      const kn = (Math.hypot(rovState.vx, rovState.vy, rovState.vz) * 1.94).toFixed(1);
-      document.getElementById('val-speed').textContent = kn;
-      document.getElementById('val-power').textContent = rovState.thrustPower;
-    }
-
-    // --- 10. MODAL DIALOGS ---
-    function openHelpModal() {
-      document.getElementById('modal-help').style.display = 'flex';
-    }
-
-    function closeHelpModal() {
-      document.getElementById('modal-help').style.display = 'none';
-      initAudio();
-    }
-
-    function onWindowResize() {
+    function openModal() { document.getElementById('modal-veil').style.display = 'flex'; }
+    function closeModal() { document.getElementById('modal-veil').style.display = 'none'; initAudio(); }
+    function onResize() {
       if (!camera || !renderer) return;
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
-    // --- 11. MAIN ANIMATION & RENDER LOOP ---
+    // --- 9. ANIMATION LOOP ---
     let lastTime = performance.now();
-    let frameCount = 0;
-    let lastFpsTime = performance.now();
-
     function animate() {
       requestAnimationFrame(animate);
-
       const now = performance.now();
       const dt = Math.min(0.1, (now - lastTime) / 1000);
       lastTime = now;
 
-      // FPS Counter
-      frameCount++;
-      if (now - lastFpsTime >= 1000) {
-        document.getElementById('val-fps').textContent = `${frameCount} FPS`;
-        frameCount = 0;
-        lastFpsTime = now;
-      }
-
-      // Physics & Entities
-      updatePhysics(dt);
+      updateROV(dt);
       updateCamera();
-      renderSonarRadar();
-      updateHUDTelemetry();
+      drawSonar();
 
-      // Vent smoke rise animation
-      ventParticles.forEach(vp => {
-        const pos = vp.particles.geometry.attributes.position;
-        for (let i = 0; i < pos.count; i++) {
-          let y = pos.getY(i) + dt * 4.5;
-          if (y > vp.originY + 12) y = vp.originY + Math.random() * 0.5;
-          pos.setY(i, y);
-        }
-        vp.particles.geometry.attributes.position.needsUpdate = true;
+      // Animate marine snow
+      if (snowParticles) snowParticles.rotation.y += 0.0006;
+
+      // Animate Jellyfish pulsing
+      jellyfishList.forEach(jf => {
+        jf.pulse += dt * jf.speed;
+        jf.group.position.y = jf.baseY + Math.sin(jf.pulse) * 1.5;
+        jf.group.scale.setScalar(0.9 + Math.sin(jf.pulse * 2) * 0.15);
       });
 
-      // Marine snow slow drift
-      if (marineSnowParticles) {
-        marineSnowParticles.rotation.y += 0.0008;
-      }
+      // Animate vent plumes
+      ventPlumes.forEach(vp => {
+        const pos = vp.plume.geometry.attributes.position;
+        for (let i = 0; i < pos.count; i++) {
+          let y = pos.getY(i) + dt * 4.5;
+          if (y > vp.originY + 12) y = vp.originY + Math.random();
+          pos.setY(i, y);
+        }
+        vp.plume.geometry.attributes.position.needsUpdate = true;
+      });
 
       renderer.render(scene, camera);
     }
 
-    // --- 12. INITIAL BOOTSTRAP ---
     window.addEventListener('DOMContentLoaded', () => {
-      initThreeScene();
+      initThree();
       animate();
-      updateArmJoints();
-
-      // First click anywhere unlocks Web Audio API
       window.addEventListener('click', () => initAudio(), { once: true });
     });
   </script>
